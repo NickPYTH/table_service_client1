@@ -20,8 +20,8 @@ const AntdProvider: FC = ({children}) => {
             theme={{
                 components: {
                     Table: {
-                        cellPaddingInline: 2,
-                        cellPaddingBlock: 2
+                        cellPaddingInline: 0,
+                        cellPaddingBlock: 0
                     }
                 }
             }}

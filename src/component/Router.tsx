@@ -1,23 +1,16 @@
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import React from "react";
+import {Navbar} from "shared/component/Navbar";
+import FilialPage from "../pages/FilialPage/ui/FilialPage";
 import {Result} from "antd";
 import {routeConfig} from "./routeConfig";
-import {Navbar} from "shared/component/Navbar";
-import {useSelector} from "react-redux";
-import {RootStateType} from "store/store";
-import {host} from "shared/config/constants";
 
 
 export const Router: React.FC = () => {
-
-    // Store
-    const currentUser = useSelector((state: RootStateType) => state.currentUser.user);
-    // -----
-
     return (
         <BrowserRouter>
-            <Navbar />
-            {currentUser && <Routes>
+            <Navbar/>
+            <Routes>
                 {Object.values(routeConfig).map(({element, path}) => (
                     <Route
                         key={path}
@@ -26,6 +19,10 @@ export const Router: React.FC = () => {
                     />
                 ))}
                 <Route
+                    path=''
+                    element={<FilialPage/>}
+                />
+                <Route
                     path='*'
                     element={<Result
                         status="404"
@@ -33,6 +30,6 @@ export const Router: React.FC = () => {
                         subTitle="Извините, страницы на которую вы перешли не существует."
                     />}
                 />
-            </Routes>}
+            </Routes>
         </BrowserRouter>)
 };
