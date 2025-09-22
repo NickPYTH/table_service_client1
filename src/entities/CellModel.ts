@@ -1,6 +1,11 @@
+import {ColumnModel} from "entities/ColumnModel";
+
 export type CellModel = {
     id: number;
     row: number;
     column: number;
-    value: "string";
+    value: string;
+
+    // Вычисляемые поля
+    type?: string
 }
