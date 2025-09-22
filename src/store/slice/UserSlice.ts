@@ -2,18 +2,18 @@ import {createSlice} from "@reduxjs/toolkit";
 import {UserModel} from "entities/UserModel";
 
 export type CurrentUserModelStateType = {
-    user: UserModel
+    user: UserModel | null;
 }
 
 const initialState: CurrentUserModelStateType = {
-    user: {id: 999, roleId: 999, username: "9999", fio: "", roleName: "", filial: "", tabnum: 999, customPost: null}
+    user: null
 }
 
 const userSlice = createSlice({
     name: 'userSlice',
     initialState,
     reducers: {
-        setCurrentUser: (state, action: { type: string, payload: UserModel }) => {
+        setCurrentUser: (state, action: { type: string, payload: any }) => {
             state.user = action.payload;
         }
     }

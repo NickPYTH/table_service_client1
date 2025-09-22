@@ -1,5 +1,3 @@
-import {ColumnModel} from "entities/ColumnModel";
-
 export type CellModel = {
     id: number;
     row: number;

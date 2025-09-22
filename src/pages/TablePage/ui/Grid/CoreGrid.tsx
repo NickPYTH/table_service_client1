@@ -16,13 +16,27 @@ import {debounce} from "lodash";
 import {ColumnMenu} from "./ColumnMenu";
 import {Button, Flex, Popconfirm} from "antd";
 import {DeleteRowOutlined, SettingOutlined} from "@ant-design/icons";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 
 type PropsType = {
     wsCellLocks: WebSocket | null,
     wsCellsUpdate: WebSocket | null,
     setContext: Function
 };
+
+function formatDate(date:Date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
+}
+
+function isValidDateString(dateString: string) {
+    const date = new Date(dateString.replace(".", "-"));
+    //@ts-ignore
+    return date instanceof Date && !isNaN(date);
+}
 
 export const CoreGrid = (props: PropsType) => {
 
@@ -84,16 +98,35 @@ export const CoreGrid = (props: PropsType) => {
                                     column.data_type == 'boolean' ? 'singleSelect' :
                                         'string',
                     valueGetter: (params: CellModel) => {
-                        return params.value;
+                        if (params.value == null)
+                            return "";
+                        if (typeof params.value == "object") {
+                            // Встретили дату
+                            params.value as Date;
+                            return formatDate(params.value);
+                        }
+                        else {
+                            // Если тип данных колонки явно указан - Дата. Следует проверить не является ли датой ячейка
+                            if (column.data_type == 'date'){
+                                if (isValidDateString(params.value)) return new Date(params.value.replace('.','-'));
+                            }
+                            // -----
+                            return params.value;
+                        }
                     },
                     valueSetter: (value, row) => {
                         let rowCopy = JSON.parse(JSON.stringify(row));
-                        rowCopy[column.id ?? 0].value = value
+                        rowCopy[column.id ?? 0].value = value;
                         return rowCopy;
                     },
-                    valueFormatter: (params: string | Dayjs) => {
+                    valueFormatter: (params: string | Date) => {
                         if (params == null)
                             return "";
+                        if (typeof params == "object") {
+                            // Встретили дату
+                            params as Date;
+                            return formatDate(params);
+                        }
                         else
                             return params;
                     },
@@ -112,7 +145,7 @@ export const CoreGrid = (props: PropsType) => {
                 aggregable: false,
                 sortable: false,
                 filterable: false,
-                renderCell: (data) => (<Flex gap={'small'}>
+                renderCell: (data) => (<Flex style={{height: '100%'}} gap={'small'} align={'center'} justify={'center'}>
                     <Button size={'small'} icon={<SettingOutlined/>} onClick={() => {
                         if (tableContext) {
                             tableContext.setIsVisibleRowSettingsModal(true);

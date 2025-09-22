@@ -10,12 +10,13 @@ import {
     ArrowLeftOutlined,
     CheckCircleOutlined,
     CloseCircleOutlined,
-    CloseOutlined, DeleteRowOutlined,
+    CloseOutlined,
+    DeleteRowOutlined,
     EditOutlined,
+    MessageOutlined,
     SaveOutlined,
     SearchOutlined,
-    SettingOutlined,
-    ShareAltOutlined
+    SettingOutlined
 } from "@ant-design/icons";
 import {RowSettingsModal} from "pages/TablePage/ui/RowSettings/RowSettingsModal";
 import {useSelector} from "react-redux";
@@ -33,6 +34,7 @@ import {RowModel} from "entities/RowModel";
 import {CoreGrid} from "pages/TablePage/ui/Grid/CoreGrid";
 import {GridColDef, GridRowId} from "@mui/x-data-grid-premium";
 import {Cell} from "pages/TablePage/ui/Grid/Cell";
+import {CoreChat} from "pages/TablePage/ui/Chat/CoreChat";
 
 function updateCellValueInArray(dataArray: any, targetId: any, newValue: any) {
     // Создаем копию массива, чтобы не мутировать исходные данные
@@ -169,6 +171,7 @@ const TablePage: React.FC = () => {
         setIsVisibleRowSettingsModal: setIsVisibleRowModal,
         setSelectedRowId: setSelectedRowId
     });
+    const [isVisibleChat, setIsVisibleChat] = useState(true);
     // -----
 
     // Effects
@@ -293,7 +296,12 @@ const TablePage: React.FC = () => {
                     headerName: column.name,
                     editable: true,
                     width: 200,
-                    type: column.data_type == 'text' ? 'string' : 'string',
+                    type: column.data_type == 'text' ? 'string' :
+                        column.data_type == 'integer' ? 'number' :
+                            column.data_type == 'float' ? 'number' :
+                                column.data_type == 'date' ? 'date' :
+                                    column.data_type == 'boolean' ? 'singleSelect' :
+                                        'string',
                     valueGetter: (params:CellModel) => {
                         return params ? params.value : '';
                     },
@@ -318,7 +326,7 @@ const TablePage: React.FC = () => {
                 aggregable: false,
                 sortable: false,
                 filterable: false,
-                renderCell: (data) => (<Flex gap={'small'}>
+                renderCell: (data) => (<Flex style={{height: '100%'}} gap={'small'} align={'center'} justify={'center'}>
                     <Button size={'small'} icon={<SettingOutlined />} onClick={() => {
                         if (context) {
                             context.setIsVisibleRowSettingsModal(true);
@@ -393,8 +401,8 @@ const TablePage: React.FC = () => {
         tmpButton.href = `${host}/api/table/${id}/export/xlsx/`
         tmpButton.click();
     };
-    const shareTableHandler = () => {
-        alert("Жду реализации");
+    const enableChatHandler = () => {
+        setIsVisibleChat(true);
     };
     const searchHandler = () => {
         if (id) getRowsByTableId({tableId: id, page: 1, limit: context.pageSize, search: searchText});
@@ -415,6 +423,7 @@ const TablePage: React.FC = () => {
 
     return (
         <TableContext.Provider value={context}>
+            {tableInfo && <CoreChat visible={isVisibleChat} setVisible={setIsVisibleChat} table={tableInfo}/>}
             <Flex vertical={true} gap={'small'} style={{padding: 5}}>
                 {(isVisibleRowModal && selectedRowId) &&
                     <RowSettingsModal rowId={selectedRowId} refresh={() => getRowsByTableId({tableId: id ? id : "0", page: 1, limit: context.pageSize})} visible={isVisibleRowModal}
@@ -455,7 +464,7 @@ const TablePage: React.FC = () => {
                                                 setIsVisibleTableSettingsModal(true);
                                             }}/>
                                         }
-                                        <Button icon={<ShareAltOutlined/>} onClick={shareTableHandler}/>
+                                        <Button icon={<MessageOutlined />} onClick={enableChatHandler}/>
                                     </>
                                 }
                             </Flex>
@@ -474,7 +483,7 @@ const TablePage: React.FC = () => {
                         }
                     </Flex>
                 </Flex>
-                <Flex style={{width: window.innerWidth - 10}}>
+                <Flex style={{width: window.innerWidth - 10}} gap={'small'}>
                     <Flex gap={'small'} style={{width: '100%'}}>
                         <Flex vertical gap={'small'}>
                             <Button type={'primary'} style={{width: 200}} onClick={openColumnModalHandler}>Добавить столбец</Button>
@@ -510,6 +519,5 @@ const TablePage: React.FC = () => {
         </TableContext.Provider>
     );
 };
-
 
 export default TablePage;

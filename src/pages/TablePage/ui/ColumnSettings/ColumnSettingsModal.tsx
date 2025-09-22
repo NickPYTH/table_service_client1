@@ -158,10 +158,6 @@ export const ColumnSettingsModal = (props: ModalProps) => {
                         }))}
                     />
                 </Flex>
-                <Flex align={'center'} gap={'small'}>
-                    <div style={{width: 270}}>Обязательный для заполнения стобец</div>
-                    <Checkbox style={{marginTop: 2.5}} checked={isRequired} onChange={(e) => updateIsRequiredHandler(e.target.checked)}/>
-                </Flex>
             </Flex>
         </Modal>
     );
