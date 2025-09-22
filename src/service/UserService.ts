@@ -1,31 +1,47 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
-import {host} from "shared/config/constants";
 import {UserModel} from "entities/UserModel";
+import {host} from "shared/config/constants";
 
 export const userAPI = createApi({
     reducerPath: 'userAPI',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${host}/api`,
+        baseUrl: `${host}/hotels/api/user`,
     }),
     tagTypes: ['user'],
     endpoints: (build) => ({
-        getCurrent: build.mutation<any, void>({
+        create: build.mutation<UserModel, UserModel>({
+            query: (body) => ({
+                url: `/create`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['user']
+        }),
+        update: build.mutation<UserModel, UserModel>({
+            query: (body) => ({
+                url: `/update`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['user']
+        }),
+        updateRole: build.mutation<UserModel, number>({
+            query: (roleId) => ({
+                url: `/updateRole?roleId=${roleId}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['user']
+        }),
+        getCurrent: build.mutation<UserModel, void>({
             query: () => ({
-                url: `/get_current_user`,
+                url: `/getCurrent`,
                 method: 'GET',
             }),
             invalidatesTags: ['user']
         }),
-        getAllByTableId: build.mutation<UserModel[], string>({
-            query: (tableId) => ({
-                url: `/users/?table_id=${tableId}`,
-                method: 'GET',
-            }),
-            invalidatesTags: ['user']
-        }),
-        getAllByRowId: build.mutation<UserModel[], number>({
-            query: (rowId) => ({
-                url: `/users/?row_id=${rowId}`,
+        getAll: build.mutation<UserModel[], void>({
+            query: () => ({
+                url: `/getAll`,
                 method: 'GET',
             }),
             invalidatesTags: ['user']
