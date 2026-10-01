@@ -4,7 +4,7 @@ const Error403Page = () => {
 
     const tryAgain = () => {
         let tmpButton = document.createElement('a');
-        tmpButton.href = `https://test-vapp-03.sgp.ru/table_service/tables_list`
+        tmpButton.href = `https://sco1-vapp-09.sgp.ru/table_service/tables_list`
         tmpButton.click();
     };
 

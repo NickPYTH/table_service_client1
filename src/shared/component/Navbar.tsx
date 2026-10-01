@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Menu, MenuProps} from 'antd';
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {userAPI} from "service/UserService";
 import {useDispatch, useSelector} from "react-redux";
-import {setCurrentUser} from "store/slice/UserSlice";
+import {setCurrentUser, setFilials} from "store/slice/GeneralSlice";
 import {RootStateType} from "store/store";
+import {filialAPI} from "service/FilialService";
 
 export const Navbar = () => {
 
@@ -13,12 +14,14 @@ export const Navbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const regex = /^\/table_service\/tables_list\/\d+$/;
     // -----
 
     // States
     const [items, setItems] = useState<MenuProps['items']>([]);
     const [current, setCurrent] = useState(() => {
         if (location.pathname == '/table_service/tables_list') return 'tables_list';
+        if (location.pathname == '/table_service/tutorial') return 'tutorial';
         return "";
     });
     // -----
@@ -28,11 +31,16 @@ export const Navbar = () => {
         data: currentUserData,
         isLoading: isCurrentUserLoading
     }] = userAPI.useGetCurrentMutation();
+    const [getFilials, {
+        data: filials,
+        isLoading: isFilialsLoading
+    }] = filialAPI.useGetAllMutation();
     // -----
 
     // Effects
     useEffect(() => {
         getCurrentUser();
+        getFilials();
     }, []);
     useEffect(() => {
         if (currentUserData) {
@@ -44,27 +52,38 @@ export const Navbar = () => {
                 label: 'Мои таблицы',
                 key: 'tables_list',
             },
+            {
+                label: 'Инструкция',
+                key: 'tutorial',
+            },
         ]);
         dispatch(setCurrentUser(currentUserData))
     }, [currentUserData]);
     useEffect(() => {
         setCurrent(() => {
             if (location.pathname == '/table_service/tables_list') return 'tables_list';
+            if (location.pathname == '/table_service/tutorial') return 'tutorial';
             return "";
         });
     }, [location]);
+    useEffect(() => {
+        if (filials) {
+            dispatch(setFilials(filials));
+        }
+    }, [filials]);
     // -----
 
     // Handlers
     const onClick: MenuProps['onClick'] = (e) => {
         setCurrent(e.key);
         if (e.key === 'tables_list') navigate(`table_service/tables_list`)
+        if (e.key === 'tutorial') navigate(`table_service/tutorial`)
     };
     // -----
-
+    if (regex.test(location.pathname))
+        return <></>
     return (<>
-            <div style={{position: 'absolute', right: 5, top: 10}}>{`${currentUser?.last_name} ${currentUser?.first_name}`}</div>
-            <Menu disabled={isCurrentUserLoading} onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items}/>
+            <Menu id={'navbar'} disabled={isCurrentUserLoading || isFilialsLoading} onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items}/>
         </>
     );
 };

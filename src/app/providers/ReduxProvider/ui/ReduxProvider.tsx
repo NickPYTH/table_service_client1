@@ -1,10 +1,14 @@
-import {FC} from "react";
+import {FC, JSX, ReactNode} from "react";
 import {Provider} from "react-redux";
 import {setupStore} from "store/store";
 
 const store = setupStore();
 
-const ReduxProvider: FC = ({children}) => {
+interface Props {
+    children: ReactNode;
+}
+
+const ReduxProvider: ({children}: Props) => JSX.Element = ({children}) => {
     return (
         <Provider store={store}>
             {children}

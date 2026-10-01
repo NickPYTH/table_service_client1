@@ -35,13 +35,14 @@ export const tablepermissionsAPI = createApi({
             }),
             invalidatesTags: ['tablepermissions']
         }),
-        patch: build.mutation<TablePermissionsModel, { id: number, canEdit: boolean }>({
-            query: ({id, canEdit}) => ({
+        patch: build.mutation<TablePermissionsModel, { id: number, canEdit: boolean, role: string }>({
+            query: ({id, canEdit, role}) => ({
                 url: `/${id}/`,
                 method: 'PATCH',
                 body: {
                     id,
-                    can_edit: canEdit
+                    can_edit: canEdit,
+                    role
                 }
             }),
             invalidatesTags: ['tablepermissions']

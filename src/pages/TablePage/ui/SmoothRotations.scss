@@ -1,0 +1,47 @@
+.smooth-flashing-rotate-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    #background-color: #222;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s;
+
+    animation:
+            smoothRotate 3s ease-in-out infinite,
+            smoothBorderFlash 0.8s ease-in-out infinite;
+}
+
+@keyframes smoothRotate {
+    0% {
+        transform: rotate(0deg);
+        opacity: 1;
+    }
+    25% {
+        opacity: 0.7;
+    }
+    50% {
+        transform: rotate(180deg);
+        opacity: 0.4;
+    }
+    75% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: rotate(360deg);
+        opacity: 1;
+    }
+}
+
+@keyframes smoothBorderFlash {
+    0%, 100% {
+        border-color: #ff0000;
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+    }
+    50% {
+        border-color: #ff4444;
+        box-shadow: 0 0 15px 8px rgba(255, 0, 0, 0.9);
+    }
+}

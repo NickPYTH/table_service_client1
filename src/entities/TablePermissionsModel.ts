@@ -7,4 +7,5 @@ export type TablePermissionsModel = {
     table: number;
     can_edit: boolean;
     can_view: boolean;
+    role: string;
 }

@@ -49,7 +49,7 @@ export const ImportTableModal = (props: ModalProps) => {
             setIsLoading(true);
 
             //@ts-ignore
-            fetch(`${host}/api/file/upload/`, requestOptions)
+            fetch(`${host}/api/rowfile/import_table/`, requestOptions)
                 .then((response) => response.text())
                 .then((result) => {
                     console.log(result);

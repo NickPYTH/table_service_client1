@@ -13,6 +13,10 @@ import {ImportTableModal} from "pages/TablesListPage/ui/ImportTableModal";
 import {wsHost} from "shared/config/constants";
 import {useSelector} from "react-redux";
 import {RootStateType} from "store/store";
+import {useNotification} from "app/providers/NotificationProvider/ui/NotificationProvider";
+import {ImportTableV2Modal} from "pages/TablesListPage/ui/ImportTableV2Modal";
+import {tableV2API} from "service/TableServiceV2";
+
 
 export interface DataType extends TableModel {
     key: React.Key;
@@ -23,6 +27,10 @@ type DataIndex = keyof DataType;
 
 const TablesListPage: React.FC = () => {
 
+    // Notification context
+    const notification = useNotification();
+    // -----
+
     // Store
     const currentUser = useSelector((state: RootStateType) => state.currentUser.user);
     // -----
@@ -31,6 +39,7 @@ const TablesListPage: React.FC = () => {
     const [selectedTable, setSelectedTable] = useState<TableModel | null>(null);
     const [isVisibleCreateTableModal, setIsVisibleCreateTableModal] = useState(false);
     const [isVisibleImportTableModal, setIsVisibleImportTableModal] = useState(false);
+    const [isVisibleImportTableV2Modal, setIsVisibleImportTableV2Modal] = useState(false);
     const [ws, setWs] = useState(null);
     const [tables, setTables] = useState<TableModel[]>([]);
     // -----
@@ -39,7 +48,7 @@ const TablesListPage: React.FC = () => {
     const [getTables, {
         data: tablesData,
         isLoading: isTablesLoading
-    }] = tableAPI.useGetAllMutation();
+    }] = tableV2API.useGetAllMutation();
     const [deleteTable, {
         isSuccess: isTableDeleteSuccess,
     }] = tableAPI.useDeleteMutation();
@@ -49,7 +58,8 @@ const TablesListPage: React.FC = () => {
     useEffect(() => {
 
         // Подключение к WebSocket
-        const socket = new WebSocket(`${wsHost}/ws/table-updates/`);
+        //@ts-ignore
+        const socket = new WebSocket(`${wsHost}/ws/table-updates?userId=${currentUser?.id}`);
 
         socket.onopen = () => {
             console.log('WebSocket connected');
@@ -75,6 +85,10 @@ const TablesListPage: React.FC = () => {
 
         socket.onerror = (error) => {
             console.error('WebSocket error:', error);
+            notification.error({
+                message: "Ошибка сервера!",
+                description: "Подключение разорвано, обновите страницу."
+            });
         };
 
         //@ts-ignore
@@ -189,17 +203,18 @@ const TablesListPage: React.FC = () => {
         },
         {
             title: 'Владелец',
-            dataIndex: 'owner',
-            key: 'owner',
-            render: ((value: any, record: TableModel) => (<div>{record.owner.username}</div>)),
+            dataIndex: 'profile',
+            key: 'profile',
+            render: ((value: any, record: TableModel) => (<div>{record.profile?.employee.lastname} {record.profile?.employee.firstname} {record.profile?.employee.secondname}</div>)),
             sorter: (a, b) => a.owner.username.charCodeAt(0) - b.owner.username.charCodeAt(0),
             filters: tables?.reduce((acc: { text: string, value: string }[], table: TableModel) => {
-                if (acc.find((g: { text: string, value: string }) => g.value == table.owner.username) === undefined)
-                    return acc.concat({text: table.owner.username, value: table.owner.username});
+                let fio = `${table.profile?.employee.lastname} ${table.profile?.employee.firstname} ${table.profile?.employee.secondname}`;
+                if (acc.find((g: { text: string, value: string }) => g.value == fio) === undefined)
+                    return acc.concat({text: fio, value: fio});
                 return acc;
             }, []),
             onFilter: (value: any, record: TableModel) => {
-                return record.owner.username.indexOf(value) === 0
+                return `${record.profile?.employee.lastname} ${record.profile?.employee.firstname} ${record.profile?.employee.secondname}`.indexOf(value) === 0
             },
             filterSearch: true,
         },
@@ -233,12 +248,12 @@ const TablesListPage: React.FC = () => {
             dataIndex: 'action',
             key: 'action',
             render: ((value: any, record: TableModel) => (<Flex justify={'center'} align={'center'} gap={'small'}>
-                <Button size={'small'} onClick={() => navigate(`${record.id}`)}>Открыть</Button>
-                {record.owner.id == currentUser?.id &&
-                    <Popconfirm onConfirm={() => deleteTable(record.id.toString())} title={`Вы точно хотите удалить таблицу "${record.title}"?`}>
-                        <Button size={'small'} danger>Удалить</Button>
-                    </Popconfirm>
-                }
+                <Button size={'small'} onClick={() => navigate(`v2/${record.id}`)}>Открыть</Button>
+                {/*{record.owner.id == currentUser?.id &&*/}
+                {/*    <Popconfirm onConfirm={() => deleteTable(record.id.toString())} title={`Вы точно хотите удалить таблицу "${record.title}"?`}>*/}
+                {/*        <Button size={'small'} danger>Удалить</Button>*/}
+                {/*    </Popconfirm>*/}
+                {/*}*/}
             </Flex>))
         },
     ];
@@ -246,11 +261,13 @@ const TablesListPage: React.FC = () => {
 
     return (
         <Flex vertical={true} gap={'small'} style={{padding: 5}}>
+            {isVisibleImportTableV2Modal && <ImportTableV2Modal refresh={() => getTables()} visible={isVisibleImportTableV2Modal} setVisible={setIsVisibleImportTableV2Modal}/>}
             {isVisibleImportTableModal && <ImportTableModal refresh={() => getTables()} visible={isVisibleImportTableModal} setVisible={setIsVisibleImportTableModal}/>}
             {isVisibleCreateTableModal && <CreateTableModal visible={isVisibleCreateTableModal} setVisible={setIsVisibleCreateTableModal}/>}
             <Flex justify={'space-between'} style={{marginTop: 10, marginLeft: 10}}>
                 <Button type={'primary'} style={{width: 140}} onClick={() => setIsVisibleCreateTableModal(true)}>Создать новую</Button>
                 <Button type={'primary'} style={{width: 140}} onClick={() => setIsVisibleImportTableModal(true)}>Импорт таблицы</Button>
+                <Button type={'primary'} style={{width: 140}} onClick={() => setIsVisibleImportTableV2Modal(true)}>Импорт таблицыV2</Button>
             </Flex>
             <Table
                 style={{width: '100vw'}}

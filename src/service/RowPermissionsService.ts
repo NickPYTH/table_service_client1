@@ -1,31 +1,31 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
 import {host} from "shared/config/constants";
-import {RowPermissionsModel} from "entities/RowPermissionsModel";
+import {PermissionModel} from "entities/PermissionModel";
 
 export const rowPermissionsAPI = createApi({
     reducerPath: 'rowPermissionsAPI',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${host}/api/rowpermissions`,
+        baseUrl: `${host}/api/`,
     }),
     tagTypes: ['rowPermissions'],
     endpoints: (build) => ({
-        getAllByRowId: build.mutation<RowPermissionsModel[], number>({
+        getAllByRowId: build.mutation<PermissionModel[], number>({
             query: (row_id) => ({
-                url: `/?row_id=${row_id}`,
+                url: `rowpermissions/?row_id=${row_id}`,
                 method: 'GET'
             }),
             invalidatesTags: ['rowPermissions']
         }),
-        getAllByUserId: build.mutation<RowPermissionsModel[], { user_id: number, table_id: string, rowsIds: number[] }>({
+        getAllByUserId: build.mutation<PermissionModel[], { user_id: number, table_id: string, rowsIds: number[] }>({
             query: ({user_id, table_id, rowsIds}) => ({
-                url: `/?user_id=${user_id}&table_id=${table_id}&rows_ids=[${rowsIds}]`,
+                url: `rowpermissions/?user_id=${user_id}&table_id=${table_id}&rows_ids=[${rowsIds}]`,
                 method: 'GET'
             }),
             invalidatesTags: ['rowPermissions']
         }),
-        create: build.mutation<RowPermissionsModel, { rowId: number, userId: number, tableId: string }>({
+        create: build.mutation<PermissionModel, { rowId: number, userId: number, tableId: string }>({
             query: ({rowId, userId, tableId}) => ({
-                url: `/`,
+                url: `rowpermissions/`,
                 method: 'POST',
                 body: {
                     row: rowId,
@@ -36,9 +36,9 @@ export const rowPermissionsAPI = createApi({
             }),
             invalidatesTags: ['rowPermissions']
         }),
-        patch: build.mutation<RowPermissionsModel, RowPermissionsModel>({
+        patch: build.mutation<PermissionModel, PermissionModel>({
             query: (rowPermission) => ({
-                url: `/${rowPermission.id}/`,
+                url: `rowpermissions/${rowPermission.id}/`,
                 method: 'PATCH',
                 body: {
                     row: rowPermission.row,
@@ -53,8 +53,22 @@ export const rowPermissionsAPI = createApi({
         }),
         delete: build.mutation<void, number>({
             query: (rowPermissionId) => ({
-                url: `/${rowPermissionId}/`,
+                url: `rowpermissions/${rowPermissionId}/`,
                 method: 'DELETE'
+            }),
+            invalidatesTags: ['rowPermissions']
+        }),
+        setAllPermission: build.mutation<void, {tableId: string, userId: number}>({
+            query: ({tableId, userId}) => ({
+                url: `set_all_permission?table_id=${tableId}&user_id=${userId}`,
+                method: 'GET'
+            }),
+            invalidatesTags: ['rowPermissions']
+        }),
+        removeAllPermission: build.mutation<void, {tableId: string, userId: number}>({
+            query: ({tableId, userId}) => ({
+                url: `remove_all_permission?table_id=${tableId}&user_id=${userId}`,
+                method: 'GET'
             }),
             invalidatesTags: ['rowPermissions']
         }),

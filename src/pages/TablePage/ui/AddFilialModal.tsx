@@ -5,13 +5,14 @@ import {tableFilialPermissionsAPI} from "service/TableFilialPermissionsService";
 import {FilialModel} from "entities/FilialModel";
 import {filialAPI} from "service/FilialService";
 import {rowFilialPermissionsAPI} from "service/RowFilialPermissionsService";
+import {columnFilialPermissionsAPI} from "service/ColumnFilialPermissionsService";
 
 type ModalProps = {
     visible: boolean,
     setVisible: Function,
     refresh: Function,
     type: string,
-    rowId?: number
+    id?: number
 }
 
 export const AddFilialModal = (props: ModalProps) => {
@@ -30,6 +31,10 @@ export const AddFilialModal = (props: ModalProps) => {
         data: filialsByRowId,
         isLoading: isFilialsByRowIdLoading
     }] = filialAPI.useGetAllByRowIdMutation();
+    const [getFilialsByColumnId, {
+        data: filialsByColumnId,
+        isLoading: isFilialsByColumnIdLoading
+    }] = filialAPI.useGetAllByColumnIdMutation();
     const [createTableFilialPermission, {
         isSuccess: isSuccessCreateTableFilialPermissions,
         isLoading: isLoadingCreateTableFilialPermissions
@@ -38,6 +43,10 @@ export const AddFilialModal = (props: ModalProps) => {
         isSuccess: isSuccessCreateRowFilialPermissions,
         isLoading: isLoadingCreateRowFilialPermissions
     }] = rowFilialPermissionsAPI.useCreateMutation();
+    const [createColumnFilialPermission, {
+        isSuccess: isSuccessCreateColumnFilialPermissions,
+        isLoading: isLoadingCreateColumnFilialPermissions
+    }] = columnFilialPermissionsAPI.useCreateMutation();
     // -----
 
     // Effects
@@ -45,7 +54,9 @@ export const AddFilialModal = (props: ModalProps) => {
         if (props.type == 'table') {
             if (id) getFilialsByTableId(id);
         } else if (props.type == 'row') {
-            if (props.rowId) getFilialsByRowId(props.rowId);
+            if (props.id) getFilialsByRowId(props.id);
+        } else if (props.type == 'column') {
+            if (props.id) getFilialsByColumnId(props.id);
         }
     }, []);
     useEffect(() => {
@@ -55,11 +66,14 @@ export const AddFilialModal = (props: ModalProps) => {
         if (filialsByRowId) setFilials(filialsByRowId);
     }, [filialsByRowId]);
     useEffect(() => {
-        if (isSuccessCreateTableFilialPermissions || isSuccessCreateRowFilialPermissions) {
+        if (filialsByColumnId) setFilials(filialsByColumnId);
+    }, [filialsByColumnId]);
+    useEffect(() => {
+        if (isSuccessCreateTableFilialPermissions || isSuccessCreateRowFilialPermissions || isSuccessCreateColumnFilialPermissions) {
             props.setVisible(false);
             props.refresh();
         }
-    }, [isSuccessCreateTableFilialPermissions || isSuccessCreateRowFilialPermissions]);
+    }, [isSuccessCreateTableFilialPermissions || isSuccessCreateRowFilialPermissions || isSuccessCreateColumnFilialPermissions]);
     // -----
 
     // Handlers
@@ -67,7 +81,14 @@ export const AddFilialModal = (props: ModalProps) => {
         if (id) createTableFilialPermission({userId, tableId: id});
     }
     const createRowFilialPermissionHandler = (filialId: number) => {
-        if (props.rowId) createRowFilialPermission({filialId, rowId: props.rowId});
+        if (props.id) {
+            createRowFilialPermission({filial: filialId, row: props.id});
+        }
+    }
+    const createColumnFilialPermissionHandler = (filialId: number) => {
+        if (props.id && id) {
+            createColumnFilialPermission({filial: filialId, column: props.id, table: parseInt(id)});
+        }
     }
     // -----
 
@@ -91,7 +112,11 @@ export const AddFilialModal = (props: ModalProps) => {
             dataIndex: 'action',
             key: 'action',
             render: (value, record) => <Flex style={{width: '100%', margin: 2}} justify={'center'} gap={'small'}>
-                <Button size={'small'} onClick={() => props.type == 'row' ? createRowFilialPermissionHandler(record.id) : createTableFilialPermissionHandler(record.id)}>Добавить</Button>
+                <Button size={'small'} onClick={() => props.type == 'row' ?
+                    createRowFilialPermissionHandler(record.id) :
+                    props.type == 'column' ? createColumnFilialPermissionHandler(record.id)
+                        :
+                        createTableFilialPermissionHandler(record.id)}>Добавить</Button>
             </Flex>
         },
     ];
@@ -112,6 +137,9 @@ export const AddFilialModal = (props: ModalProps) => {
                     dataSource={filials}
                     loading={isFilialsByTableIdLoading || isFilialsByRowIdLoading || isLoadingCreateTableFilialPermissions || isLoadingCreateRowFilialPermissions}
                     bordered
+                    pagination={{
+                        pageSize: 30
+                    }}
                 />
             </Flex>
         </Modal>

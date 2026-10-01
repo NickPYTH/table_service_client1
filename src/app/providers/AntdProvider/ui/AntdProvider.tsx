@@ -1,5 +1,5 @@
 import ruRU from "antd/locale/ru_RU";
-import {FC} from "react";
+import {FC, JSX, ReactNode} from "react";
 import {ConfigProvider} from "antd";
 import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
@@ -13,7 +13,11 @@ dayjs.updateLocale('ru', {
     weekStart: 1
 });
 
-const AntdProvider: FC = ({children}) => {
+interface Props {
+    children: ReactNode;
+}
+
+const AntdProvider: ({children}: Props) => JSX.Element = ({children}) => {
     return (
         <ConfigProvider
             locale={ruRU}

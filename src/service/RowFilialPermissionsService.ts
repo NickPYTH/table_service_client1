@@ -1,6 +1,8 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
 import {host} from "shared/config/constants";
 import {RowFilialPermissionsModel} from "entities/RowFilialPermissionsModel";
+import {FilialModel} from "entities/FilialModel";
+import {RowModel} from "entities/RowModel";
 
 export const rowFilialPermissionsAPI = createApi({
     reducerPath: 'rowFilialPermissionsAPI',
@@ -16,13 +18,13 @@ export const rowFilialPermissionsAPI = createApi({
             }),
             invalidatesTags: ['rowFilialPermissions']
         }),
-        create: build.mutation<RowFilialPermissionsModel, {rowId: number, filialId: number}>({
-            query: ({rowId, filialId}) => ({
+        create: build.mutation<RowFilialPermissionsModel, {row: number, filial: number}>({
+            query: ({row, filial}) => ({
                 url: `/`,
                 method: 'POST',
                 body: {
-                    row_id: rowId,
-                    filial_id: filialId,
+                    row,
+                    filial,
                     can_edit: true,
                     can_delete: true,
                 }
