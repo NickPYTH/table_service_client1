@@ -1,4 +1,4 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {host} from "shared/config/constants";
 import {RowModel} from "entities/RowModel";
 import {GridFilterItem, GridLogicOperator, GridSortDirection} from "@mui/x-data-grid-premium";

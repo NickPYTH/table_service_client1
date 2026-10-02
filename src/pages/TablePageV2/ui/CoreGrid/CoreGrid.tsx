@@ -10,27 +10,19 @@ export const CoreGrid = () => {
         columns
     } = useColumns();
     const {
-        rows,
-        rowCount,
-        paginationModel,
-        setPaginationModelHandler,
-        filterModel,
-        setFilterModelHandler,
-        sortModel,
-        setSortModelHandler,
-        rowGroupingModel,
-        setRowGroupingModelHandler,
+        apiRef,
+        dataSource
     } = useRows();
     const {
         onCellEditStopHandler,
-        apiRef
-    } = useCoreGrid();
+    } = useCoreGrid(apiRef);
 
     return(
         <div>
             <DataGridPremium
+                dataSource={dataSource}
+                disablePivoting
                 apiRef={apiRef}
-                rows={rows}
                 columns={columns}
                 columnHeaderHeight={50}
                 rowHeight={31}
@@ -40,16 +32,8 @@ export const CoreGrid = () => {
                 paginationMode="server"
                 sortingMode="server"
                 filterMode="server"
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModelHandler}
-                sortModel={sortModel}
-                onSortModelChange={setSortModelHandler}
-                filterModel={filterModel}
-                onFilterModelChange={setFilterModelHandler}
-                rowGroupingModel={rowGroupingModel}
-                onRowGroupingModelChange={setRowGroupingModelHandler}
+                dataSourceKeepPreviousData
                 pageSizeOptions={[25, 50, 100, 200, 500, 1000]}
-                rowCount={rowCount}
                 // -----
                 rowBufferPx={300}
                 columnBufferPx={300}

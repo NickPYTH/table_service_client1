@@ -1,10 +1,8 @@
-import {tableV2API} from "service/TableServiceV2";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo} from "react";
 import {useParams} from "react-router-dom";
-import {GridFilterModel, GridPaginationModel, GridRowGroupingModel, GridSortModel} from "@mui/x-data-grid-premium";
+import {useGridApiRef} from "@mui/x-data-grid-premium";
 //@ts-ignore
 import {debounce} from "lodash";
-import {CellValueType} from "pages/TablePageV2/store/types";
 import {useWebSocket} from "app/providers/WebSocketProvider";
 
 export const useRows = () => {
@@ -14,43 +12,12 @@ export const useRows = () => {
     // -----
 
     // States
+    const apiRef = useGridApiRef();
     const { isConnected, registerHandler, sendMessage } = useWebSocket();
-    const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(()=>{
-        const model = localStorage.getItem(`table_pagination_${id}`);
-        if (model)
-            return JSON.parse(model);
-        else
-            return {page: 0, pageSize: 100};
-    });
-    const [filterModel, setFilterModel] = useState<GridFilterModel>(() => {
-        const model = localStorage.getItem(`table_filter_${id}`);
-        if (model)
-            return JSON.parse(model);
-        else
-            return {items: []};
-    });
-    const [sortModel, setSortModel] = useState<GridSortModel>(() => {
-        const model = localStorage.getItem(`table_sort_${id}`);
-        if (model)
-            return JSON.parse(model);
-        else
-            return [];
-    });
-    const [rowGroupingModel, setRowGrouping] = useState<GridRowGroupingModel>(() => {
-        const model = localStorage.getItem(`table_row_grouping_${id}`);
-        if (model)
-            return JSON.parse(model);
-        else
-            return undefined;
-    });
-    const [rows, setRows] = useState<Record<string, CellValueType>[]>([]);
-    const [rowCount, setRowCount] = useState(0);
     // -----
 
     // Web requests
-    const [getTableData, {
-        data: tableData,
-    }] = tableV2API.useGetDataMutation();
+
     // -----
 
     // Effects
@@ -75,130 +42,98 @@ export const useRows = () => {
                     sm = JSON.parse(sm_ls);
                 else
                     sm = [];
-                getTableData({
-                    table_id: parseInt(id),
-                    ...pm,
-                    sort: sm,
-                    filter: fm,
-                    group_keys: []
-                });
+                // getTableData({
+                //     table_id: parseInt(id),
+                //     ...pm,
+                //     sort: sm,
+                //     filter: fm,
+                //     group_keys: []
+                // });
             } else {
-                getTableData({
-                    table_id: parseInt(id),
-                    ...paginationModel,
-                    sort: sortModel,
-                    filter: filterModel,
-                    group_keys: []
-                });
+                // getTableData({
+                //     table_id: parseInt(id),
+                //     ...paginationModel,
+                //     sort: sortModel,
+                //     filter: filterModel,
+                //     group_keys: []
+                // });
             }
         }
     }, []);
     useEffect(() => {
-        if (tableData) {
-            setRows(tableData.rows);
-            setRowCount(tableData.paginator.totalPages)
-        }
-    }, [tableData]);
-    useEffect(() => {
         const handler = registerHandler(
             'cell_update',
-            (data: { entity: {table_id: number, row_id: number, column_name: string, value: string}[] }) => {
-                setRows(rows.map((row: Record<string,string>) => {
-                    let rowCopy: Record<string,string> | null = null;
-                    let updated_row_cell = data.entity.filter((r)=>r.row_id.toString()==row['id']);
-                    if (updated_row_cell.length > 0)
-                        rowCopy = JSON.parse(JSON.stringify(row));
-                    updated_row_cell.forEach((urc)=>{
-                        if (rowCopy)
-                            rowCopy[urc.column_name] = urc.value;
-                    });
-                    if (rowCopy) {
-                        return rowCopy
-                    }
-                    return row;
+            (data: { entity: { table_id: number, row_id: number, column_name: string, value: string }[] }) => {
+                const api = apiRef.current;
+                if (!api) return;
+
+                // Группируем изменения по row_id, чтобы за один вызов обновить все поля строки
+                const updatesByRow = new Map<number, Record<string, string>>();
+
+                data.entity.forEach((record) => {
+                    const existing = updatesByRow.get(record.row_id) ?? {};
+                    existing[record.column_name] = record.value;
+                    updatesByRow.set(record.row_id, existing);
+                });
+
+                // Формируем массив для updateRows: [{ id, field1: value1, field2: value2 }, ...]
+                const rowsToUpdate = Array.from(updatesByRow.entries()).map(([id, fields]) => ({
+                    id,
+                    ...fields,
                 }));
+
+                api.updateRows(rowsToUpdate);
             }
         );
         // Удаляем обработчик при размонтировании компонента
         return handler;
-    }, [registerHandler, rows]);
+    }, [registerHandler]);
     // -----
 
     // Handlers
-    const debounceFilter = useCallback(
-        debounce((filterModel:GridFilterModel)=>{
-            if (id) {
-                getTableData({
-                    table_id: parseInt(id),
-                    ...paginationModel,
-                    sort: sortModel,
-                    filter: filterModel,
-                    group_keys: []
-                });
-            }
-        }, 2000),
-        [id, sortModel, paginationModel]
-    );
-    const setPaginationModelHandler = (model: GridPaginationModel) => {
-        if (tableData == undefined) return;
-        setPaginationModel(model);
-        localStorage.setItem(`table_pagination_${id}`, JSON.stringify(model));
-        if (id) {
-            getTableData({
-                table_id: parseInt(id),
-                ...model,
-                sort: sortModel,
-                filter: filterModel,
-                group_keys: []
-            })
-        }
-    }
-    const setFilterModelHandler = (model: GridFilterModel) => {
-        if (tableData == undefined) return;
-        setFilterModel(model);
-        localStorage.setItem(`table_filter_${id}`, JSON.stringify(model));
-        debounceFilter(model);
-    }
-    const setSortModelHandler = (model: GridSortModel) => {
-        if (tableData == undefined) return;
-        setSortModel(model);
-        localStorage.setItem(`table_sort_${id}`, JSON.stringify(model));
-        if (id) {
-            getTableData({
-                table_id: parseInt(id),
-                ...paginationModel,
-                sort: model,
-                filter: filterModel,
-                group_keys: []
-            });
-        }
-    }
-    const setRowGroupingModelHandler = (model: GridRowGroupingModel) => {
-        if (tableData == undefined) return;
-        setRowGrouping(model);
-        localStorage.setItem(`table_row_grouping_{id}`, JSON.stringify(model));
-        if (id) {
-            getTableData({
-                table_id: parseInt(id),
-                ...paginationModel,
-                sort: sortModel,
-                filter: filterModel,
-                group_keys: []
-            });
-        }
-    }
+
     // -----
 
+    const dataSource = useMemo(() => ({
+        getRows: async (params: any) => {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            console.log(params)
+            const raw = JSON.stringify({
+                "table_id": id ?? 99,
+                "page": params.paginationModel.page,
+                "pageSize": params.paginationModel.pageSize,
+                "sort": params.sortModel,
+                "filter": params.filterModel,
+                "group_keys": params.groupKeys,
+                "group_fields": params.groupFields
+            });
+
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow' as RequestRedirect
+            };
+
+            const response = await fetch(
+                "http://localhost:8000/denormalized_column_storage/get_table_data/",
+                requestOptions
+            );
+
+            const data = await response.json();
+
+            return {
+                rows: data.rows,
+                rowCount: data.paginator.total,
+            };
+        },
+        getGroupKey: (row: any) => row.name,
+        getChildrenCount: (row: any) => row.childrenCount,
+    }), [id]);
+
     return {
-        rows,
-        rowCount,
-        paginationModel,
-        setPaginationModelHandler,
-        filterModel,
-        setFilterModelHandler,
-        sortModel,
-        setSortModelHandler,
-        rowGroupingModel,
-        setRowGroupingModelHandler,
+        apiRef,
+        dataSource
     }
 }

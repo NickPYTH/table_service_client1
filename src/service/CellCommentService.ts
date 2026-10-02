@@ -1,6 +1,6 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
 import {host} from "shared/config/constants";
 import {CellComment} from "entities/CellComment";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 export const cellCommentAPI = createApi({
     reducerPath: 'cellCommentAPI',

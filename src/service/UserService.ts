@@ -1,4 +1,4 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {host} from "shared/config/constants";
 import {UserModel} from "entities/UserModel";
 import {ProfileModel} from "entities/ProfileModel";

@@ -1,16 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {Menu, MenuProps} from 'antd';
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {userAPI} from "service/UserService";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {setCurrentUser, setFilials} from "store/slice/GeneralSlice";
-import {RootStateType} from "store/store";
 import {filialAPI} from "service/FilialService";
 
 export const Navbar = () => {
 
     // Useful utils
-    const currentUser = useSelector((state: RootStateType) => state.currentUser.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
