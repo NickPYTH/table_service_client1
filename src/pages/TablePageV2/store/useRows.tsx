@@ -76,7 +76,7 @@ export const useRows = () => {
                     updatesByRow.set(record.row_id, existing);
                 });
 
-                // Формируем массив для updateRows: [{ id, field1: value1, field2: value2 }, ...]
+                // Формируем массив для updateRows: [{ id, field1: value1, field2: value2 } ]
                 const rowsToUpdate = Array.from(updatesByRow.entries()).map(([id, fields]) => ({
                     id,
                     ...fields,
@@ -98,7 +98,7 @@ export const useRows = () => {
         getRows: async (params: any) => {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-            console.log(params)
+            //console.log(params)
             const raw = JSON.stringify({
                 "table_id": id ?? 99,
                 "page": params.paginationModel.page,

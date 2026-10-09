@@ -18,6 +18,7 @@ import {columnFilialPermissionsAPI} from "service/ColumnFilialPermissionsService
 import {cellCommentAPI} from "service/CellCommentService";
 import {rowValuePermissionsApi} from "service/RowValuePermissionsService";
 import {tableV2API} from "service/TableServiceV2";
+import tableV2Slice from "./slice/TableV2Slice";
 
 export type RootStateType = {
     currentUser: CurrentUserModelStateType
@@ -25,6 +26,7 @@ export type RootStateType = {
 
 const rootReducer = combineReducers({
     currentUser: userSlice,
+    tableV2Slice: tableV2Slice,
     [userAPI.reducerPath]: userAPI.reducer,
     [filialAPI.reducerPath]: filialAPI.reducer,
     [tableAPI.reducerPath]: tableAPI.reducer,

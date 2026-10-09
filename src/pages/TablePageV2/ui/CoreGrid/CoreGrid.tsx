@@ -3,6 +3,10 @@ import {useColumns} from "../../store/useColumns";
 import {useRows} from "../../store/useRows";
 import {DataGridPremium} from "@mui/x-data-grid-premium";
 import {ruRU} from "@mui/x-data-grid-premium/locales";
+import {ColumnSettings} from "widgets/ColumnSettings";
+import {ColumnMenu} from "./Slots/ColumnMenu";
+import {CustomPaginationWithSelect} from "./Slots/CustomPagination";
+import {RowSettings} from "widgets/RowSettings";
 
 export const CoreGrid = () => {
 
@@ -14,11 +18,13 @@ export const CoreGrid = () => {
         dataSource
     } = useRows();
     const {
+        tableV2State,
         onCellEditStopHandler,
     } = useCoreGrid(apiRef);
-
     return(
-        <div>
+        <>
+            {tableV2State.isVisibleColumnSettingsModal && <ColumnSettings />}
+            {tableV2State.isVisibleRowSettingsModal && <RowSettings />}
             <DataGridPremium
                 dataSource={dataSource}
                 disablePivoting
@@ -32,8 +38,6 @@ export const CoreGrid = () => {
                 paginationMode="server"
                 sortingMode="server"
                 filterMode="server"
-                dataSourceKeepPreviousData
-                pageSizeOptions={[25, 50, 100, 200, 500, 1000]}
                 // -----
                 rowBufferPx={300}
                 columnBufferPx={300}
@@ -44,7 +48,12 @@ export const CoreGrid = () => {
                 }}
                 showCellVerticalBorder
                 showColumnVerticalBorder
+                showToolbar
+                slots={{
+                    columnMenu: ColumnMenu,
+                    pagination: CustomPaginationWithSelect
+                }}
             />
-        </div>
+        </>
     )
 }

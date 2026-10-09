@@ -1,5 +1,10 @@
 import {GridFilterModel, GridSortModel} from "@mui/x-data-grid-premium";
 
+type TableV2ContextType = {
+    isVisibleColumnSettingsModal: boolean;
+    selectedColumnSettingsId: number | null;
+}
+
 type CellValueType = string | number[] | number | boolean;
 
 type GetDataTableV2Request = {
@@ -52,7 +57,19 @@ type UpdateCellTableV2Response = {
     result: string;
 }
 
+type UpdateColumnTableV2Request = {
+    table_id: string;
+    column_system_name: string;
+    column_alternative_name: string;
+    type: string;
+}
+
+type UpdateColumnTableV2Response = {
+    result: string;
+}
+
 export {
+    TableV2ContextType,
     CellValueType,
     GetDataTableV2Request,
     GetDataTableV2Response,
@@ -60,5 +77,7 @@ export {
     GetCellFormulaTableV2Request,
     GetCellFormulaTableV2Response,
     UpdateCellTableV2Request,
-    UpdateCellTableV2Response
+    UpdateCellTableV2Response,
+    UpdateColumnTableV2Request,
+    UpdateColumnTableV2Response
 }

@@ -100,3 +100,8 @@ export const boss_list = [
     'BannikovAY',
     'SirenkoNiV'
 ]
+
+export const COLUMN_TYPES = [
+    {value: 'text', label: 'Текст'},
+    {value: 'list', label: 'Список'}
+]

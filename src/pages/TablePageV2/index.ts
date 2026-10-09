@@ -6,7 +6,9 @@ import {
     GetDataTableV2Request,
     GetDataTableV2Response,
     UpdateCellTableV2Request,
-    UpdateCellTableV2Response
+    UpdateCellTableV2Response,
+    UpdateColumnTableV2Request,
+    UpdateColumnTableV2Response
 } from "./store/types";
 
 export {
@@ -17,5 +19,7 @@ export {
     GetCellFormulaTableV2Request,
     GetCellFormulaTableV2Response,
     UpdateCellTableV2Request,
-    UpdateCellTableV2Response
+    UpdateCellTableV2Response,
+    UpdateColumnTableV2Request,
+    UpdateColumnTableV2Response
 };

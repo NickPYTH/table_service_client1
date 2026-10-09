@@ -66,6 +66,9 @@ export const MainTab = (props:PropsType) => {
             notification.success({
                 message: "Успешно!",
                 description: "Настройки сохранены."
+            });notification.success({
+                message: "Успешно!",
+                description: "Настройки сохранены."
             });
         }
     }, [isUpdateSuccess]);

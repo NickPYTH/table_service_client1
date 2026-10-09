@@ -35,6 +35,7 @@ export const useColumns = () => {
             let columns_l: GridColDef[] = tableColumns.map((column)=> {
                 return {
                     field: column.system_name,
+                    headerName: column.alternative_name,
                     editable: true,
                     minWidth: 200,
                     type: column.type,
