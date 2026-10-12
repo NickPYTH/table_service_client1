@@ -70,20 +70,5 @@ export const tableV2API = createApi({
             }),
             invalidatesTags: ['tableV2']
         }),
-        updateColumn: build.mutation<UpdateColumnTableV2Response, UpdateColumnTableV2Request>({
-            query: (body) => ({
-                url: `update_column/`,
-                method: 'POST',
-                body
-            }),
-            invalidatesTags: ['tableV2']
-        }),
-        getColumn: build.mutation<ColumnV2Model, {table_id:string, column_system_name:string}>({
-            query: ({table_id, column_system_name}) => ({
-                url: `get_column/?table_id=${table_id}&system_name=${column_system_name}`,
-                method: 'GET'
-            }),
-            invalidatesTags: ['tableV2']
-        }),
     })
 });

@@ -9,3 +9,7 @@ export type FieldType = {
     required: boolean;
     readonly: boolean;
 };
+
+export type SelectTypeGridType = {
+    columnId: number;
+}

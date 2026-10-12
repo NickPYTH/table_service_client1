@@ -7,9 +7,9 @@ import {SelectTypeGrid} from "widgets/ColumnSettings/ui/SelectTypeGrid";
 const ColumnSettings = () => {
 
     const {
+        columnServerData,
         tableV2State,
         form,
-        type,
         saveHandler,
         closeHandler,
         isGetLoading,
@@ -79,8 +79,8 @@ const ColumnSettings = () => {
                     <Checkbox/>
                 </Form.Item>
             </Form>
-            {type == 'list' &&
-                <SelectTypeGrid />
+            {columnServerData?.type == 'list' &&
+                <SelectTypeGrid columnId={columnServerData.id} />
             }
         </Modal>
     )

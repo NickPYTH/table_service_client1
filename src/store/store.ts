@@ -19,6 +19,7 @@ import {cellCommentAPI} from "service/CellCommentService";
 import {rowValuePermissionsApi} from "service/RowValuePermissionsService";
 import {tableV2API} from "service/TableServiceV2";
 import tableV2Slice from "./slice/TableV2Slice";
+import {columnV2API} from "service/ColumnV2Service";
 
 export type RootStateType = {
     currentUser: CurrentUserModelStateType
@@ -45,6 +46,7 @@ const rootReducer = combineReducers({
     [cellCommentAPI.reducerPath]: cellCommentAPI.reducer,
     [rowValuePermissionsApi.reducerPath]: rowValuePermissionsApi.reducer,
     [tableV2API.reducerPath]: tableV2API.reducer,
+    [columnV2API.reducerPath]: columnV2API.reducer,
 })
 
 export const setupStore = () => {
@@ -70,6 +72,7 @@ export const setupStore = () => {
                 .concat(cellCommentAPI.middleware)
                 .concat(rowValuePermissionsApi.middleware)
                 .concat(tableV2API.middleware)
+                .concat(columnV2API.middleware)
     })
 }
 
