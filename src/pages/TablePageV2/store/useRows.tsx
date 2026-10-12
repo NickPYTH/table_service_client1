@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useGridApiRef} from "@mui/x-data-grid-premium";
 //@ts-ignore
@@ -13,7 +13,8 @@ export const useRows = () => {
 
     // States
     const apiRef = useGridApiRef();
-    const { isConnected, registerHandler, sendMessage } = useWebSocket();
+    const {registerHandler, sendMessage} = useWebSocket();
+    const [searchValue, setSearchValue] = useState("");
     // -----
 
     // Web requests
@@ -21,45 +22,6 @@ export const useRows = () => {
     // -----
 
     // Effects
-    useEffect(() => {
-        if (id){
-            if (localStorage.getItem(`table_pagination_${id}`) || localStorage.getItem(`table_filter_${id}`) || localStorage.getItem(`table_sort_${id}`)) {
-                const pm_ls = localStorage.getItem(`table_pagination_${id}`);
-                let pm;
-                if (pm_ls)
-                    pm = JSON.parse(pm_ls);
-                else
-                    pm = {page: 0, pageSize: 100};
-                const fm_ls = localStorage.getItem(`table_filter_${id}`);
-                let fm;
-                if (fm_ls)
-                    fm = JSON.parse(fm_ls);
-                else
-                    fm = {items: []};
-                const sm_ls = localStorage.getItem(`table_sort_${id}`);
-                let sm;
-                if (sm_ls)
-                    sm = JSON.parse(sm_ls);
-                else
-                    sm = [];
-                // getTableData({
-                //     table_id: parseInt(id),
-                //     ...pm,
-                //     sort: sm,
-                //     filter: fm,
-                //     group_keys: []
-                // });
-            } else {
-                // getTableData({
-                //     table_id: parseInt(id),
-                //     ...paginationModel,
-                //     sort: sortModel,
-                //     filter: filterModel,
-                //     group_keys: []
-                // });
-            }
-        }
-    }, []);
     useEffect(() => {
         const handler = registerHandler(
             'cell_update',
@@ -91,14 +53,16 @@ export const useRows = () => {
     // -----
 
     // Handlers
-
+    const handleQuickFilterChange = (newValue:string) => {
+        setSearchValue(newValue);
+    };
     // -----
 
     const dataSource = useMemo(() => ({
         getRows: async (params: any) => {
+            console.log(params);
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-            //console.log(params)
             const raw = JSON.stringify({
                 "table_id": id ?? 99,
                 "page": params.paginationModel.page,
@@ -130,10 +94,11 @@ export const useRows = () => {
         },
         getGroupKey: (row: any) => row.name,
         getChildrenCount: (row: any) => row.childrenCount,
-    }), [id]);
+    }), [id, searchValue]);
 
     return {
         apiRef,
-        dataSource
+        dataSource,
+        handleQuickFilterChange
     }
 }

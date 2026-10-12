@@ -1,7 +1,7 @@
 import {useCoreGrid} from "pages/TablePageV2/store/useCoreGrid";
 import {useColumns} from "../../store/useColumns";
 import {useRows} from "../../store/useRows";
-import {DataGridPremium, GridAiAssistantPanel} from "@mui/x-data-grid-premium";
+import {DataGridPremium, GridAiAssistantPanel, GridToolbarQuickFilter } from "@mui/x-data-grid-premium";
 import {ruRU} from "@mui/x-data-grid-premium/locales";
 import {ColumnSettings} from "widgets/ColumnSettings";
 import {ColumnMenu} from "./Slots/ColumnMenu";
@@ -16,7 +16,8 @@ export const CoreGrid = () => {
     } = useColumns();
     const {
         apiRef,
-        dataSource
+        dataSource,
+        handleQuickFilterChange
     } = useRows();
     const {
         tableV2State,
@@ -53,8 +54,10 @@ export const CoreGrid = () => {
                 slots={{
                     columnMenu: ColumnMenu,
                     pagination: CustomPaginationWithSelect,
-                    aiAssistantPanel: GridAiAssistantPanel
+                    aiAssistantPanel: GridAiAssistantPanel,
                 }}
+                columnFilterDebounceMs={500}
+                filterDebounceMs={500}
                 aiAssistant
                 allowAiAssistantDataSampling
                 onPrompt={processPromptHandler}
