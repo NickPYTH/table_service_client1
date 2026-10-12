@@ -38,6 +38,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
+    "@mui/x-charts-premium": "^9.15.0",
     "@mui/x-data-grid-premium": "9.14.0",
     "@mui/x-license": "^8.0.0",
     "@reduxjs/toolkit": "^2.5.0",

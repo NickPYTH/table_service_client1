@@ -28,7 +28,7 @@ const tableV2Slice = createSlice({
             state.isVisibleRowSettingsModal = action.payload;
         },
         setSelectedRowId: (state, action: {type: string, payload: number | null}) => {
-            state.selected = action.payload;
+            state.selectedRowId = action.payload;
         },
     }
 });

@@ -1,12 +1,13 @@
 import {useCoreGrid} from "pages/TablePageV2/store/useCoreGrid";
 import {useColumns} from "../../store/useColumns";
 import {useRows} from "../../store/useRows";
-import {DataGridPremium} from "@mui/x-data-grid-premium";
+import {DataGridPremium, GridAiAssistantPanel} from "@mui/x-data-grid-premium";
 import {ruRU} from "@mui/x-data-grid-premium/locales";
 import {ColumnSettings} from "widgets/ColumnSettings";
 import {ColumnMenu} from "./Slots/ColumnMenu";
 import {CustomPaginationWithSelect} from "./Slots/CustomPagination";
 import {RowSettings} from "widgets/RowSettings";
+
 
 export const CoreGrid = () => {
 
@@ -20,11 +21,12 @@ export const CoreGrid = () => {
     const {
         tableV2State,
         onCellEditStopHandler,
+        processPromptHandler
     } = useCoreGrid(apiRef);
-    return(
+    return (
         <>
-            {tableV2State.isVisibleColumnSettingsModal && <ColumnSettings />}
-            {tableV2State.isVisibleRowSettingsModal && <RowSettings />}
+            {tableV2State.isVisibleColumnSettingsModal && <ColumnSettings/>}
+            {tableV2State.isVisibleRowSettingsModal && <RowSettings/>}
             <DataGridPremium
                 dataSource={dataSource}
                 disablePivoting
@@ -32,7 +34,6 @@ export const CoreGrid = () => {
                 columns={columns}
                 columnHeaderHeight={50}
                 rowHeight={31}
-                localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
                 // Настройки пагинации
                 pagination
                 paginationMode="server"
@@ -41,7 +42,7 @@ export const CoreGrid = () => {
                 // -----
                 rowBufferPx={300}
                 columnBufferPx={300}
-                throttleRowsMs={100} // сглаживает перезапись строк при смене страницы/сортировки
+                throttleRowsMs={100}
                 onCellEditStop={onCellEditStopHandler}
                 initialState={{
                     pinnedColumns: {right: ['action'], left: ['order_f']},
@@ -51,7 +52,26 @@ export const CoreGrid = () => {
                 showToolbar
                 slots={{
                     columnMenu: ColumnMenu,
-                    pagination: CustomPaginationWithSelect
+                    pagination: CustomPaginationWithSelect,
+                    aiAssistantPanel: GridAiAssistantPanel
+                }}
+                aiAssistant
+                allowAiAssistantDataSampling
+                onPrompt={processPromptHandler}
+                aiAssistantSuggestions={[
+                    {value: 'Sort by name'},
+                    {value: 'Show people from the EU'},
+                    {value: 'Sort by company name and employee name'},
+                    {value: 'Order companies by amount of people'},
+                ]}
+                localeText={{
+                    ...ruRU.components.MuiDataGrid.defaultProps.localeText,
+                    aiAssistantPanelTitle: 'AI Ассистент',
+                    aiAssistantSuggestions: 'Примеры запросов',
+                    aiAssistantPanelClose: 'Закрыть',
+                    aiAssistantPanelConversationHistory: 'История',
+                    aiAssistantPanelEmptyConversation: 'Пусто...',
+                    aiAssistantPanelNewConversation: 'Новая беседа',
                 }}
             />
         </>
