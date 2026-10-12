@@ -4,4 +4,7 @@ export type ColumnV2Model = {
     system_name: string;
     alternative_name: string;
     type: string;
+    hidden: boolean;
+    readonly: boolean;
+    required: boolean;
 }

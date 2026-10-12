@@ -1,4 +1,4 @@
-import {useForm} from "antd/es/form/Form";
+import {useForm, useWatch} from "antd/es/form/Form";
 import {FieldType} from "widgets/ColumnSettings/store/types";
 import {tableV2API} from "service/TableServiceV2";
 import {useEffect} from "react";
@@ -24,6 +24,7 @@ export const useColumnSettings = () => {
 
     // State
     const [form] = useForm<FieldType>();
+    const type = useWatch('type', form);
     // -----
 
     // Web requests
@@ -54,6 +55,9 @@ export const useColumnSettings = () => {
             form.setFieldsValue({
                 name: columnData.alternative_name,
                 type: columnData.type,
+                hidden: columnData.hidden,
+                readonly: columnData.readonly,
+                required: columnData.required,
             });
         }
     }, [columnData]);
@@ -64,6 +68,8 @@ export const useColumnSettings = () => {
                 message: "Успешно",
                 description: "Настройки колонки сохранены"
             });
+            if (tableV2State.refreshColumns)
+                tableV2State.refreshColumns();
             closeHandler();
         }
     }, [isUpdateSuccess]);
@@ -87,6 +93,9 @@ export const useColumnSettings = () => {
                     column_system_name: tableV2State.selectedColumnSystemName,
                     column_alternative_name: values.name,
                     type: values.type,
+                    readonly: values.readonly,
+                    required: values.required,
+                    hidden: values.hidden
                 });
         } catch (error) {
             console.error('Ошибка:', error);
@@ -100,6 +109,7 @@ export const useColumnSettings = () => {
     return{
         tableV2State,
         form,
+        type,
         saveHandler,
         closeHandler,
         isGetLoading,

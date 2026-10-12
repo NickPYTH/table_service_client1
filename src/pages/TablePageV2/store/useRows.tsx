@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo} from "react";
 import {useParams} from "react-router-dom";
 import {useGridApiRef} from "@mui/x-data-grid-premium";
 //@ts-ignore
@@ -14,7 +14,6 @@ export const useRows = () => {
     // States
     const apiRef = useGridApiRef();
     const {registerHandler, sendMessage} = useWebSocket();
-    const [searchValue, setSearchValue] = useState("");
     // -----
 
     // Web requests
@@ -53,14 +52,11 @@ export const useRows = () => {
     // -----
 
     // Handlers
-    const handleQuickFilterChange = (newValue:string) => {
-        setSearchValue(newValue);
-    };
+
     // -----
 
     const dataSource = useMemo(() => ({
         getRows: async (params: any) => {
-            console.log(params);
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             const raw = JSON.stringify({
@@ -94,11 +90,10 @@ export const useRows = () => {
         },
         getGroupKey: (row: any) => row.name,
         getChildrenCount: (row: any) => row.childrenCount,
-    }), [id, searchValue]);
+    }), [id]);
 
     return {
         apiRef,
-        dataSource,
-        handleQuickFilterChange
+        dataSource
     }
 }

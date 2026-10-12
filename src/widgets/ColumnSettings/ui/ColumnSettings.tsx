@@ -1,13 +1,15 @@
 import {useColumnSettings} from "../store/useColumnSettings";
 import {ColumnSettingsType, FieldType} from "widgets/ColumnSettings/store/types";
-import {Form, Input, Modal, Select} from 'antd';
+import {Checkbox, Form, Input, Modal, Select} from 'antd';
 import {COLUMN_TYPES} from "shared/config/constants";
+import {SelectTypeGrid} from "widgets/ColumnSettings/ui/SelectTypeGrid";
 
 const ColumnSettings = () => {
 
     const {
         tableV2State,
         form,
+        type,
         saveHandler,
         closeHandler,
         isGetLoading,
@@ -23,14 +25,14 @@ const ColumnSettings = () => {
             okText="Сохранить"
             cancelText="Отменить"
             loading={isGetLoading || isUpdateLoading}
-            destroyOnClose
+            destroyOnHidden
         >
             <Form
                 form={form}
                 name="basic"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 600 }}
+                style={{ maxWidth: 700 }}
                 initialValues={{ remember: true }}
                 autoComplete="off"
             >
@@ -53,7 +55,33 @@ const ColumnSettings = () => {
                     />
                 </Form.Item>
 
+                <Form.Item<FieldType>
+                    label="Скрытая колонка"
+                    name="hidden"
+                    valuePropName="checked"
+                >
+                    <Checkbox/>
+                </Form.Item>
+
+                <Form.Item<FieldType>
+                    label="Обязательная колонка"
+                    name="required"
+                    valuePropName="checked"
+                >
+                    <Checkbox/>
+                </Form.Item>
+
+                <Form.Item<FieldType>
+                    label="Только просмотр"
+                    name="readonly"
+                    valuePropName="checked"
+                >
+                    <Checkbox/>
+                </Form.Item>
             </Form>
+            {type == 'list' &&
+                <SelectTypeGrid />
+            }
         </Modal>
     )
 }

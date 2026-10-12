@@ -5,13 +5,15 @@ export type TableV2ModelStateType = {
     selectedColumnSystemName: string | null;
     isVisibleRowSettingsModal: boolean;
     selectedRowId: number | null;
+    refreshColumns: Function | null;
 }
 
 const initialState: TableV2ModelStateType = {
     isVisibleColumnSettingsModal: false,
     selectedColumnSystemName: null,
     isVisibleRowSettingsModal: false,
-    selectedRowId: null
+    selectedRowId: null,
+    refreshColumns: null
 }
 
 const tableV2Slice = createSlice({
@@ -30,6 +32,9 @@ const tableV2Slice = createSlice({
         setSelectedRowId: (state, action: {type: string, payload: number | null}) => {
             state.selectedRowId = action.payload;
         },
+        setRefreshColumns: (state, action: {type: string, payload: Function}) => {
+            state.refreshColumns = action.payload;
+        }
     }
 });
 
@@ -37,7 +42,8 @@ export const {
     setIsVisibleColumnSettingsModal,
     setSelectedColumnSystemName,
     setSelectedRowId,
-    setIsVisibleRowSettingsModal
+    setIsVisibleRowSettingsModal,
+    setRefreshColumns
 } = tableV2Slice.actions;
 
 export default tableV2Slice.reducer;

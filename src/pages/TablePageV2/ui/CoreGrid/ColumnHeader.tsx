@@ -8,7 +8,9 @@ type ColumnHeaderType = {
 export const ColumnHeader = ({column}:ColumnHeaderType) => {
     return(
         <Flex vertical gap={'small'}>
-            <div style={{position:'absolute', fontWeight: 800, color:"#1975d0", bottom: 0, left: 2}}>{column.system_name}</div>
+            <div style={{position:'absolute', fontWeight: 800, color:"#1975d0", bottom: 0, left: 2}}>
+                {column.system_name} <span style={{color:"#ff5454", fontSize: 10, fontWeight: 'normal'}}>{column.required && "*обязательная колонка"}</span>
+            </div>
             <Flex style={{
                 whiteSpace: 'normal',
                 wordWrap: 'break-word',

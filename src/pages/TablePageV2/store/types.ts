@@ -34,6 +34,9 @@ type GetColumnsTableV2Response = {
     system_name: string;
     alternative_name: string;
     type: string;
+    hidden: boolean;
+    readonly: boolean;
+    required: boolean;
 }
 
 type GetCellFormulaTableV2Request = {
@@ -62,6 +65,9 @@ type UpdateColumnTableV2Request = {
     column_system_name: string;
     column_alternative_name: string;
     type: string;
+    hidden: boolean;
+    required: boolean;
+    readonly: boolean;
 }
 
 type UpdateColumnTableV2Response = {
