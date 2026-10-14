@@ -1,4 +1,4 @@
-import React, {useId, useState} from "react";
+import React, {useEffect, useId, useState} from "react";
 import {
     AiAssistantPanelTrigger,
     ChartsPanelTrigger,
@@ -21,6 +21,7 @@ import { TableV2ModelStateType } from "store/slice/TableV2Slice";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import {rowV2API} from "service/RowV2Service";
+import {useNotification} from "app/providers/NotificationProvider";
 
 export const CustomToolbar = ({
                                   showQuickFilter = true,
@@ -36,6 +37,7 @@ export const CustomToolbar = ({
     // Store
     const tableV2State = useSelector((state: { tableV2Slice: TableV2ModelStateType }) => state.tableV2Slice);
     const dispatch = useDispatch();
+    const notification = useNotification();
     // -----
 
     // Web requests
@@ -68,6 +70,15 @@ export const CustomToolbar = ({
     const showDividerBeforeExport = showExport && (!rootProps.disableColumnFilter || !rootProps.disableColumnSelector);
     // -----
 
+    // Effects
+    useEffect(() => {
+        if (isInsertRowSuccess)
+            notification.success({
+                message: "Успешно",
+                description: "Строка вставлена"
+            });
+    }, [isInsertRowSuccess]);
+    // -----
 
     // Handlers
     const closeExportMenu = () => setExportMenuOpen(false);

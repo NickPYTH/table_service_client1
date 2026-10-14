@@ -45,12 +45,18 @@ export const useColumns = () => {
                 // Заполняем скрытые колонки
                 hiddenColumnsTmp[column.system_name] = !column.hidden;
                 // -----
+
                 return {
                     field: column.system_name,
                     headerName: column.alternative_name,
                     editable: true,
                     minWidth: 200,
                     type: column.type,
+                    cellClassName: (params: GridCellParams) => {
+                        // Окраска области, либо обязательной колонки
+                        if (column.required && (params.value=='' || params.value==undefined))
+                            return 'required-cell-class'
+                    },
                     renderHeader: () => <ColumnHeader column={column}/>,
                     renderEditCell: (params: GridRenderEditCellParams) => {
                         switch (column.type) {

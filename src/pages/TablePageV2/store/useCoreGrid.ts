@@ -1,11 +1,7 @@
 import {tableV2API} from "service/TableServiceV2";
-import {
-    GridApiPremium,
-    GridCellParams,
-    unstable_gridDefaultPromptResolver as promptResolver
-} from "@mui/x-data-grid-premium";
+import {GridApiPremium, GridCellParams} from "@mui/x-data-grid-premium";
 import {useParams} from "react-router-dom";
-import {RefObject} from "react";
+import React, {RefObject, useState} from "react";
 import {useSelector} from "react-redux";
 import {TableV2ModelStateType} from "store/slice/TableV2Slice";
 
@@ -17,6 +13,15 @@ export const useCoreGrid = (apiRef: RefObject<GridApiPremium | null>) => {
 
     // Store
     const tableV2State = useSelector((state: { tableV2Slice: TableV2ModelStateType }) => state.tableV2Slice);
+    // -----
+
+    // States
+    const [gridContextMenu, setGridContextMenu] = useState<{
+        mouseX: number;
+        mouseY: number;
+        rowId: string;
+        columnSystemName: string;
+    } | null>(null);
     // -----
 
     // Web requests
@@ -74,8 +79,8 @@ export const useCoreGrid = (apiRef: RefObject<GridApiPremium | null>) => {
 
         const response = await fetch('http://localhost:8000/ai_assistant/process_prompt/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: prompt, contextString, conversationId }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({query: prompt, contextString, conversationId}),
         });
 
         const result = await response.json();
@@ -86,11 +91,31 @@ export const useCoreGrid = (apiRef: RefObject<GridApiPremium | null>) => {
 
         return result.data;
     }
+    const handleCellContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        const cellEl = event.currentTarget as HTMLElement;
+        const rowEl = cellEl.closest('.MuiDataGrid-row') as HTMLElement | null;
+        if (!rowEl) return;
+        const columnSystemName = cellEl.getAttribute('data-field') ?? "";
+        const rowIndexStr = rowEl.getAttribute('data-rowindex');
+        if (rowIndexStr != null && apiRef.current) {
+            const rowId:any = apiRef.current.getRowIdFromRowIndex(Number(rowIndexStr));
+            setGridContextMenu({
+                mouseX: event.clientX,
+                mouseY: event.clientY,
+                rowId,
+                columnSystemName,
+            });
+        }
+    };
     // -----
 
     return {
         tableV2State,
         onCellEditStopHandler,
-        processPromptHandler
+        processPromptHandler,
+        gridContextMenu,
+        setGridContextMenu,
+        handleCellContextMenu
     }
 }

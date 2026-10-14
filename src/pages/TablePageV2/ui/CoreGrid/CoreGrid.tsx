@@ -8,6 +8,7 @@ import {ColumnMenu} from "./Slots/ColumnMenu";
 import {CustomPaginationWithSelect} from "./Slots/CustomPagination";
 import {CustomToolbar} from "./Slots/CustomToolbar";
 import {RowSettings} from "widgets/RowSettings";
+import {GridContextMenu} from "pages/TablePageV2/ui/CoreGrid/GridContextMenu";
 
 
 export const CoreGrid = () => {
@@ -24,8 +25,12 @@ export const CoreGrid = () => {
     const {
         tableV2State,
         onCellEditStopHandler,
-        processPromptHandler
+        processPromptHandler,
+        gridContextMenu,
+        setGridContextMenu,
+        handleCellContextMenu
     } = useCoreGrid(apiRef);
+
     return (
         <>
             {tableV2State.isVisibleColumnSettingsModal && <ColumnSettings/>}
@@ -63,6 +68,11 @@ export const CoreGrid = () => {
                         pagination: CustomPaginationWithSelect,
                         aiAssistantPanel: GridAiAssistantPanel,
                     }}
+                    slotProps={{
+                        cell: {
+                            onContextMenu: handleCellContextMenu,
+                        },
+                    }}
                     columnFilterDebounceMs={500}
                     filterDebounceMs={500}
                     aiAssistant
@@ -83,8 +93,10 @@ export const CoreGrid = () => {
                         aiAssistantPanelEmptyConversation: 'Пусто...',
                         aiAssistantPanelNewConversation: 'Новая беседа',
                     }}
+                    cellSelection
                 />
             }
+            <GridContextMenu gridContextMenu={gridContextMenu} setGridContextMenu={setGridContextMenu}/>
         </>
     )
 }
