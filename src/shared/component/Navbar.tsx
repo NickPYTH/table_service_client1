@@ -12,7 +12,7 @@ export const Navbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const regex = /^\/table_service\/tables_list\/\d+$/;
+    const regex = /^\/table_service\/tables_list\/(?:v2\/)?\d+$/;
     // -----
 
     // States

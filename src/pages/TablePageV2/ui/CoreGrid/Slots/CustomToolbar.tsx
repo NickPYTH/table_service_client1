@@ -7,23 +7,31 @@ import {
     ExportExcel,
     ExportPrint,
     FilterPanelTrigger,
+    type GridToolbarProps,
     GridToolbarQuickFilter,
     PivotPanelTrigger,
     Toolbar,
     ToolbarButton,
     useGridApiContext,
     useGridRootProps,
-    type GridToolbarProps,
 } from "@mui/x-data-grid-premium";
-import {Button, Divider, Menu, MenuItem} from "@mui/material";
+import {Divider, Menu, MenuItem} from "@mui/material";
+import {InsertRowBelowOutlined, InsertRowRightOutlined} from "@ant-design/icons";
+import { TableV2ModelStateType } from "store/slice/TableV2Slice";
+import {useDispatch, useSelector} from "react-redux";
 
 export const CustomToolbar = ({
-    showQuickFilter = true,
-    quickFilterProps,
-    csvOptions,
-    printOptions,
-    excelOptions,
-}: GridToolbarProps) => {
+                                  showQuickFilter = true,
+                                  quickFilterProps,
+                                  csvOptions,
+                                  printOptions,
+                                  excelOptions,
+                              }: GridToolbarProps) => {
+    // Store
+    const tableV2State = useSelector((state: { tableV2Slice: TableV2ModelStateType }) => state.tableV2Slice);
+    const dispatch = useDispatch();
+    // -----
+
     const apiRef = useGridApiContext();
     const rootProps = useGridRootProps();
     const [exportMenuOpen, setExportMenuOpen] = useState(false);
@@ -48,28 +56,26 @@ export const CustomToolbar = ({
 
     return (
         <Toolbar style={{width: "100%", justifyContent: "flex-start"}}>
-            <Tooltip title="Тестовая кнопка">
-                <ToolbarButton
-                    aria-label="Тест"
-                    onClick={() => {
-                        console.log("Тестовая кнопка тулбара");
-                    }}
-                    render={(props) => (
-                        <Button
-                            size="small"
-                            variant="outlined"
-                            ref={props.ref}
-                            tabIndex={props.tabIndex}
-                            disabled={props.disabled}
-                            onClick={props.onClick}
-                            onKeyDown={props.onKeyDown}
-                            onFocus={props.onFocus}
-                            onBlur={props.onBlur}
-                        >
-                            Тест
-                        </Button>
-                    )}
-                />
+            <span style={{
+                fontWeight: 800,
+                margin: "0 24px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap"
+            }}>
+                {tableV2State.tableName}
+            </span>
+            <Tooltip title="Вставить строку">
+                <ToolbarButton aria-label="Вставить строку" onClick={() => {
+                }}>
+                    <InsertRowBelowOutlined style={{fontSize: 18}}/>
+                </ToolbarButton>
+            </Tooltip>
+            <Tooltip title="Вставить столбец">
+                <ToolbarButton aria-label="Вставить столбец" onClick={() => {
+                }}>
+                    <InsertRowRightOutlined style={{fontSize: 18}}/>
+                </ToolbarButton>
             </Tooltip>
 
             {/* Забирает свободное место */}

@@ -8,7 +8,7 @@ let ActionColumn: GridColDef = {
     disableReorder: true,
     field: "action",
     headerName: "",
-    width: 50,
+    width: 80,
     groupable: false,
     aggregable: false,
     sortable: false,
