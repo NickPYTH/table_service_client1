@@ -25,6 +25,13 @@ export const columnV2API = createApi({
             }),
             invalidatesTags: ['columnV2']
         }),
+        getColumnSelectList: build.mutation<{rows:{id:number, value:string}[]}, number>({
+            query: (columnId) => ({
+                url: `get_column_select_list/?column_id=${columnId}`,
+                method: 'GET',
+            }),
+            invalidatesTags: ['columnV2']
+        }),
         createColumnSelectList: build.mutation<void, { column_id: number, value: string }>({
             query: (body) => ({
                 url: `create_column_select_list/`,

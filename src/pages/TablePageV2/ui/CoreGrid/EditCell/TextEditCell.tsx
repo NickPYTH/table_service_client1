@@ -53,6 +53,7 @@ export const TextEditCell = ({params}: PropsType) => {
         return <Flex justify={'center'} align={'center'} style={{width: '100%'}}><Spin /></Flex>
     return(
         <Input
+            autoFocus={true}
             fullWidth
             value={value}
             onChange={(e)=>changeValueHandler(e.target.value)}

@@ -1,6 +1,5 @@
 import {useParams} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {RootStateType} from "store/store";
+import {useDispatch} from "react-redux";
 import {tableV2API} from "service/TableServiceV2";
 import React, {useEffect, useState} from "react";
 import {GridCellParams, GridColDef, GridRenderEditCellParams} from "@mui/x-data-grid-premium";
@@ -9,6 +8,7 @@ import {TextEditCell} from "pages/TablePageV2/ui/CoreGrid/EditCell/TextEditCell"
 import ActionColumn from "pages/TablePageV2/ui/CoreGrid/ExtraColumn/ActionColumn";
 import OrderColumn from "pages/TablePageV2/ui/CoreGrid/ExtraColumn/OrderColumn";
 import {setRefreshColumns} from "store/slice/TableV2Slice";
+import { SelectEditCell } from "../ui/CoreGrid/EditCell/SelectEditCell";
 
 export const useColumns = () => {
 
@@ -35,13 +35,13 @@ export const useColumns = () => {
     useEffect(() => {
         if (id) {
             getTableColumns(id);
-            dispatch(setRefreshColumns(()=>getTableColumns(id)));
+            dispatch(setRefreshColumns(() => getTableColumns(id)));
         }
     }, []);
     useEffect(() => {
-        if (tableColumns){
-            let hiddenColumnsTmp:Record<string, boolean> = {};
-            let columns_l: GridColDef[] = tableColumns.map((column)=> {
+        if (tableColumns) {
+            let hiddenColumnsTmp: Record<string, boolean> = {};
+            let columns_l: GridColDef[] = tableColumns.map((column) => {
                 // Заполняем скрытые колонки
                 hiddenColumnsTmp[column.system_name] = !column.hidden;
                 // -----
@@ -51,11 +51,13 @@ export const useColumns = () => {
                     editable: true,
                     minWidth: 200,
                     type: column.type,
-                    renderHeader: () => <ColumnHeader column={column} />,
+                    renderHeader: () => <ColumnHeader column={column}/>,
                     renderEditCell: (params: GridRenderEditCellParams) => {
                         switch (column.type) {
                             case "text":
                                 return <TextEditCell params={params}/>
+                            case "list":
+                                return <SelectEditCell params={params} columnId={column.id}/>
                             default:
                                 return <TextEditCell params={params}/>
                         }
@@ -71,8 +73,8 @@ export const useColumns = () => {
     // -----
 
     // Handlers
-    const isCellEditableHandler = (p:GridCellParams) => {
-        let column = tableColumns?.find(c=>c.system_name==p.field);
+    const isCellEditableHandler = (p: GridCellParams) => {
+        let column = tableColumns?.find(c => c.system_name == p.field);
         return column ? !column.readonly : true;
     }
     // -----
