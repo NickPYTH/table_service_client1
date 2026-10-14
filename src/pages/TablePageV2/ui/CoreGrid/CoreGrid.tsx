@@ -6,6 +6,7 @@ import {ruRU} from "@mui/x-data-grid-premium/locales";
 import {ColumnSettings} from "widgets/ColumnSettings";
 import {ColumnMenu} from "./Slots/ColumnMenu";
 import {CustomPaginationWithSelect} from "./Slots/CustomPagination";
+import {CustomToolbar} from "./Slots/CustomToolbar";
 import {RowSettings} from "widgets/RowSettings";
 
 
@@ -57,6 +58,7 @@ export const CoreGrid = () => {
                     showColumnVerticalBorder
                     showToolbar
                     slots={{
+                        toolbar: CustomToolbar,
                         columnMenu: ColumnMenu,
                         pagination: CustomPaginationWithSelect,
                         aiAssistantPanel: GridAiAssistantPanel,
