@@ -19,6 +19,8 @@ import {Divider, Menu, MenuItem} from "@mui/material";
 import {InsertRowBelowOutlined, InsertRowRightOutlined} from "@ant-design/icons";
 import { TableV2ModelStateType } from "store/slice/TableV2Slice";
 import {useDispatch, useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
+import {rowV2API} from "service/RowV2Service";
 
 export const CustomToolbar = ({
                                   showQuickFilter = true,
@@ -27,11 +29,23 @@ export const CustomToolbar = ({
                                   printOptions,
                                   excelOptions,
                               }: GridToolbarProps) => {
+    // Params
+    const {id} = useParams();
+    // -----
+
     // Store
     const tableV2State = useSelector((state: { tableV2Slice: TableV2ModelStateType }) => state.tableV2Slice);
     const dispatch = useDispatch();
     // -----
 
+    // Web requests
+    const [insertRow, {
+        isSuccess: isInsertRowSuccess,
+        isLoading: isInsertRowLoading
+    }] = rowV2API.useInsertRowMutation();
+    // -----
+
+    // States
     const apiRef = useGridApiContext();
     const rootProps = useGridRootProps();
     const [exportMenuOpen, setExportMenuOpen] = useState(false);
@@ -52,7 +66,17 @@ export const CustomToolbar = ({
         || !printOptions?.disableToolbarButton
         || !excelOptions?.disableToolbarButton;
     const showDividerBeforeExport = showExport && (!rootProps.disableColumnFilter || !rootProps.disableColumnSelector);
+    // -----
+
+
+    // Handlers
     const closeExportMenu = () => setExportMenuOpen(false);
+    const insertRowHandler = () => {
+        if (id) {
+            insertRow({table_id: id});
+        }
+    }
+    // -----
 
     return (
         <Toolbar style={{width: "100%", justifyContent: "flex-start"}}>
@@ -66,14 +90,12 @@ export const CustomToolbar = ({
                 {tableV2State.tableName}
             </span>
             <Tooltip title="Вставить строку">
-                <ToolbarButton aria-label="Вставить строку" onClick={() => {
-                }}>
+                <ToolbarButton disabled={isInsertRowLoading} aria-label="Вставить строку" onClick={insertRowHandler}>
                     <InsertRowBelowOutlined style={{fontSize: 18}}/>
                 </ToolbarButton>
             </Tooltip>
             <Tooltip title="Вставить столбец">
-                <ToolbarButton aria-label="Вставить столбец" onClick={() => {
-                }}>
+                <ToolbarButton aria-label="Вставить столбец" onClick={insertRowHandler}>
                     <InsertRowRightOutlined style={{fontSize: 18}}/>
                 </ToolbarButton>
             </Tooltip>

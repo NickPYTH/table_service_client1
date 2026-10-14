@@ -49,6 +49,19 @@ export const useRows = () => {
         // Удаляем обработчик при размонтировании компонента
         return handler;
     }, [registerHandler]);
+    useEffect(() => {
+        const handler = registerHandler(
+            'row_insert',
+            (data: { entity: { table_id: number, position: number, value: Record<string, string> } }) => {
+                const api = apiRef.current;
+                if (!api) return;
+                if (id == data.entity.table_id.toString())
+                    api.dataSource.fetchRows(undefined, { skipCache: true });
+            }
+        );
+        // Удаляем обработчик при размонтировании компонента
+        return handler;
+    }, [registerHandler]);
     // -----
 
     // Handlers
@@ -57,6 +70,7 @@ export const useRows = () => {
 
     const dataSource = useMemo(() => ({
         getRows: async (params: any) => {
+            console.log('try to fetch')
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             const raw = JSON.stringify({
