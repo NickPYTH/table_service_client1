@@ -1,6 +1,6 @@
 import {useForm} from "antd/es/form/Form";
 import {FieldType} from "widgets/ColumnSettings/store/types";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {setIsVisibleColumnSettingsModal, TableV2ModelStateType} from "store/slice/TableV2Slice";
@@ -24,7 +24,6 @@ export const useColumnSettings = () => {
 
     // State
     const [form] = useForm<FieldType>();
-    const [createMode] = useState<boolean>(!tableV2State.selectedColumnSystemName);
     // -----
 
     // Web requests
@@ -42,13 +41,11 @@ export const useColumnSettings = () => {
 
     // Effects
     useEffect(() => {
-        if (tableV2State.selectedColumnSystemName)
-            if (id) {
-                get({
-                    table_id: id,
-                    column_system_name: tableV2State.selectedColumnSystemName
-                });
-            }
+        if (id && tableV2State.selectedColumnSystemName)
+            get({
+                table_id: id,
+                column_system_name: tableV2State.selectedColumnSystemName
+            });
     }, []);
     useEffect(() => {
         if (columnServerData) {
@@ -68,9 +65,16 @@ export const useColumnSettings = () => {
                 message: "Успешно",
                 description: "Настройки колонки сохранены"
             });
-            if (tableV2State.refreshColumns)
+            if (tableV2State.refreshColumns) {
                 tableV2State.refreshColumns();
-            closeHandler();
+                if (id && tableV2State.selectedColumnSystemName) {
+                    get({
+                        table_id: id,
+                        column_system_name: tableV2State.selectedColumnSystemName
+                    });
+                }
+            }
+            //closeHandler();
         }
     }, [isUpdateSuccess]);
     useEffect(() => {
@@ -107,7 +111,6 @@ export const useColumnSettings = () => {
     // -----
 
     return {
-        createMode,
         columnServerData,
         tableV2State,
         form,

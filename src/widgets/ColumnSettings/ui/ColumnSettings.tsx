@@ -1,5 +1,5 @@
 import {useColumnSettings} from "../store/useColumnSettings";
-import {ColumnSettingsType, FieldType} from "widgets/ColumnSettings/store/types";
+import {FieldType} from "widgets/ColumnSettings/store/types";
 import {Checkbox, Form, Input, Modal, Select} from 'antd';
 import {COLUMN_TYPES} from "shared/config/constants";
 import {SelectTypeGrid} from "widgets/ColumnSettings/ui/SelectTypeGrid";
@@ -7,7 +7,6 @@ import {SelectTypeGrid} from "widgets/ColumnSettings/ui/SelectTypeGrid";
 const ColumnSettings = () => {
 
     const {
-        createMode,
         columnServerData,
         tableV2State,
         form,
@@ -19,7 +18,7 @@ const ColumnSettings = () => {
 
     return (
         <Modal
-            title={`${createMode?"Создание":"Настройка"} колонки`}
+            title={`Настройка колонки`}
             open={tableV2State.isVisibleColumnSettingsModal}
             onOk={saveHandler}
             onCancel={closeHandler}
@@ -31,24 +30,24 @@ const ColumnSettings = () => {
             <Form
                 form={form}
                 name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 700 }}
-                initialValues={{ remember: true }}
+                labelCol={{span: 8}}
+                wrapperCol={{span: 16}}
+                style={{maxWidth: 700}}
+                initialValues={{remember: true}}
                 autoComplete="off"
             >
                 <Form.Item<FieldType>
                     label="Название"
                     name="name"
-                    rules={[{ required: true, message: 'Введите название' }]}
+                    rules={[{required: true, message: 'Введите название'}]}
                 >
-                    <Input />
+                    <Input/>
                 </Form.Item>
 
                 <Form.Item<FieldType>
                     label="Тип"
                     name="type"
-                    rules={[{ required: true, message: 'Выберите тип' }]}
+                    rules={[{required: true, message: 'Выберите тип'}]}
                 >
                     <Select
                         placeholder="Выберите тип"
@@ -81,7 +80,7 @@ const ColumnSettings = () => {
                 </Form.Item>
             </Form>
             {columnServerData?.type == 'list' &&
-                <SelectTypeGrid columnId={columnServerData.id} />
+                <SelectTypeGrid columnId={columnServerData.id}/>
             }
         </Modal>
     )
