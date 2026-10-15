@@ -48,7 +48,7 @@ export const useRows = () => {
         );
         // Удаляем обработчик при размонтировании компонента
         return handler;
-    }, [registerHandler]);
+    }, [registerHandler]); // Обновление ячейки
     useEffect(() => {
         const handler = registerHandler(
             'row_insert',
@@ -61,7 +61,20 @@ export const useRows = () => {
         );
         // Удаляем обработчик при размонтировании компонента
         return handler;
-    }, [registerHandler]);
+    }, [registerHandler]); // Вставка строки
+    useEffect(() => {
+        const handler = registerHandler(
+            'column_insert',
+            (data: { entity: { table_id: number } }) => {
+                const api = apiRef.current;
+                if (!api) return;
+                if (id == data.entity.table_id.toString())
+                    api.dataSource.fetchRows(undefined, { skipCache: true });
+            }
+        );
+        // Удаляем обработчик при размонтировании компонента
+        return handler;
+    }, [registerHandler]); // Вставка колонки
     // -----
 
     // Handlers
@@ -70,7 +83,6 @@ export const useRows = () => {
 
     const dataSource = useMemo(() => ({
         getRows: async (params: any) => {
-            console.log('try to fetch')
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             const raw = JSON.stringify({

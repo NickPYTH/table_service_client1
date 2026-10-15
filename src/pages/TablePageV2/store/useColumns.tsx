@@ -8,7 +8,8 @@ import {TextEditCell} from "pages/TablePageV2/ui/CoreGrid/EditCell/TextEditCell"
 import ActionColumn from "pages/TablePageV2/ui/CoreGrid/ExtraColumn/ActionColumn";
 import OrderColumn from "pages/TablePageV2/ui/CoreGrid/ExtraColumn/OrderColumn";
 import {setRefreshColumns} from "store/slice/TableV2Slice";
-import { SelectEditCell } from "../ui/CoreGrid/EditCell/SelectEditCell";
+import {SelectEditCell} from "../ui/CoreGrid/EditCell/SelectEditCell";
+import {useWebSocket} from "app/providers/WebSocketProvider";
 
 export const useColumns = () => {
 
@@ -21,6 +22,7 @@ export const useColumns = () => {
     // -----
 
     // States
+    const {registerHandler} = useWebSocket();
     const [columns, setColumns] = useState<GridColDef[]>([]);
     const [hiddenColumns, setHiddenColumns] = useState<Record<string, boolean>>({});
     // -----
@@ -54,7 +56,7 @@ export const useColumns = () => {
                     type: column.type,
                     cellClassName: (params: GridCellParams) => {
                         // Окраска области, либо обязательной колонки
-                        if (column.required && (params.value=='' || params.value==undefined))
+                        if (column.required && (params.value == '' || params.value == undefined))
                             return 'required-cell-class'
                     },
                     renderHeader: () => <ColumnHeader column={column}/>,
@@ -76,6 +78,17 @@ export const useColumns = () => {
             setColumns(columns_l);
         }
     }, [tableColumns]);
+    useEffect(() => {
+        const handler = registerHandler(
+            'column_insert',
+            (data: { entity: { table_id: number } }) => {
+                if (id == data.entity.table_id.toString())
+                    getTableColumns(id);
+            }
+        );
+        // Удаляем обработчик при размонтировании компонента
+        return handler;
+    }, [registerHandler]); // Вставка колонки
     // -----
 
     // Handlers
@@ -90,4 +103,4 @@ export const useColumns = () => {
         hiddenColumns,
         isCellEditableHandler
     }
-}
+};

@@ -10,6 +10,14 @@ export const columnV2API = createApi({
     }),
     tagTypes: ['columnV2'],
     endpoints: (build) => ({
+        insertColumn: build.mutation<void, Record<string, any>>({
+            query: (body) => ({
+                url: `insert_column/`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['columnV2']
+        }),
         updateColumn: build.mutation<UpdateColumnTableV2Response, UpdateColumnTableV2Request>({
             query: (body) => ({
                 url: `update_column/`,
