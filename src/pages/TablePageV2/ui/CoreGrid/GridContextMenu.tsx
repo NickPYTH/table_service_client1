@@ -38,7 +38,7 @@ export const GridContextMenu = ({apiRef, gridContextMenu, setGridContextMenu}: a
         if (isInsertColumnSuccess)
             notification.success({
                 message: "Успешно",
-                description: "Столбец добавлен"
+                description: "Колонка добавлена"
             });
     }, [isInsertColumnSuccess]);
     // -----
@@ -76,7 +76,7 @@ export const GridContextMenu = ({apiRef, gridContextMenu, setGridContextMenu}: a
                     hidden: false,
                     required: false,
                     readonly: false
-                } 
+                }
                 insertColumn(requestParams);
             }
         }

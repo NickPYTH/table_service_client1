@@ -17,11 +17,12 @@ import {
 } from "@mui/x-data-grid-premium";
 import {Divider, Menu, MenuItem} from "@mui/material";
 import {InsertRowBelowOutlined, InsertRowRightOutlined} from "@ant-design/icons";
-import {setIsVisibleColumnSettingsModal, TableV2ModelStateType} from "store/slice/TableV2Slice";
-import {useDispatch, useSelector} from "react-redux";
+import {TableV2ModelStateType} from "store/slice/TableV2Slice";
+import {useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import {rowV2API} from "service/RowV2Service";
 import {useNotification} from "app/providers/NotificationProvider";
+import {columnV2API} from "service/ColumnV2Service";
 
 export const CustomToolbar = ({
                                   showQuickFilter = true,
@@ -36,7 +37,6 @@ export const CustomToolbar = ({
 
     // Store
     const tableV2State = useSelector((state: { tableV2Slice: TableV2ModelStateType }) => state.tableV2Slice);
-    const dispatch = useDispatch();
     const notification = useNotification();
     // -----
 
@@ -45,6 +45,9 @@ export const CustomToolbar = ({
         isSuccess: isInsertRowSuccess,
         isLoading: isInsertRowLoading
     }] = rowV2API.useInsertRowMutation();
+    const [insertColumn, {
+        isSuccess: isInsertColumnSuccess,
+    }] = columnV2API.useInsertColumnMutation();
     // -----
 
     // States
@@ -78,6 +81,13 @@ export const CustomToolbar = ({
                 description: "Строка вставлена"
             });
     }, [isInsertRowSuccess]);
+    useEffect(() => {
+        if (isInsertColumnSuccess)
+            notification.success({
+                message: "Успешно",
+                description: "Колонка добавлена"
+            });
+    }, [isInsertColumnSuccess]);
     // -----
 
     // Handlers
@@ -88,7 +98,19 @@ export const CustomToolbar = ({
         }
     }
     const insertColumnHandler = () => {
-        dispatch(setIsVisibleColumnSettingsModal(true));
+        if (id) {
+            if (apiRef?.current) {
+                let requestParams: Record<string, any> = {
+                    table_id: id,
+                    alternative_name: "Новая колонка",
+                    column_type: 'text',
+                    hidden: false,
+                    required: false,
+                    readonly: false
+                }
+                insertColumn(requestParams);
+            }
+        }
     }
     // -----
 
@@ -108,7 +130,7 @@ export const CustomToolbar = ({
                     <InsertRowBelowOutlined style={{fontSize: 18}}/>
                 </ToolbarButton>
             </Tooltip>
-            <Tooltip title="Вставить столбец">
+            <Tooltip title="Вставить колонку">
                 <ToolbarButton aria-label="Вставить столбец" onClick={insertColumnHandler}>
                     <InsertRowRightOutlined style={{fontSize: 18}}/>
                 </ToolbarButton>
