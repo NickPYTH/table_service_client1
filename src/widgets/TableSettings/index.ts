@@ -1,3 +1,3 @@
-import {TableSettings} from "./ui/TableSettingsModal";
+import {TableSettings} from "./ui/TableSettings";
 
 export {TableSettings};

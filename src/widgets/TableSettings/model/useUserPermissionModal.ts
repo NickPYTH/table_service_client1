@@ -1,0 +1,6 @@
+export const useUserPermissionModal = () => {
+
+    return {
+
+    }
+}

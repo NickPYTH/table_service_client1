@@ -1,6 +1,8 @@
 import {Flex} from "antd";
 import {QuestionOutlined, SettingOutlined} from "@ant-design/icons";
 import React from "react";
+import {usePageBar} from "pages/TablePageV2/store/usePageBar";
+import {TableSettings} from "widgets/TableSettings";
 
 const barButtonStyle: React.CSSProperties = {
     width: 36,
@@ -18,6 +20,12 @@ const barButtonStyle: React.CSSProperties = {
 };
 
 export const PageBar = () => {
+
+    const {
+        visibleTableSettingsModal,
+        setVisibleTableSettingsModal
+    } = usePageBar();
+
     return (
         <Flex
             align="center"
@@ -30,7 +38,10 @@ export const PageBar = () => {
                 color: "#fff",
             }}
         >
-            <button type="button" aria-label="Меню" style={barButtonStyle} onClick={() => {}}>
+            {visibleTableSettingsModal &&
+                <TableSettings visible={visibleTableSettingsModal} setVisible={setVisibleTableSettingsModal}/>}
+            <button type="button" aria-label="Меню" style={barButtonStyle} onClick={() => {
+            }}>
                 <span
                     style={{
                         display: "grid",
@@ -44,16 +55,19 @@ export const PageBar = () => {
                 </span>
             </button>
             <Flex align="center" gap={4}>
-                <button type="button" aria-label="Настройки" style={barButtonStyle} onClick={() => {}}>
+                <button type="button" aria-label="Настройки" style={barButtonStyle} onClick={() =>
+                    setVisibleTableSettingsModal(true)}>
                     <SettingOutlined/>
                 </button>
-                <button type="button" aria-label="Помощь" style={barButtonStyle} onClick={() => {}}>
+                <button type="button" aria-label="Помощь" style={barButtonStyle} onClick={() =>
+                    setVisibleTableSettingsModal(true)}>
                     <QuestionOutlined/>
                 </button>
                 <button
                     type="button"
                     aria-label="Профиль"
-                    onClick={() => {}}
+                    onClick={() => {
+                    }}
                     style={{
                         ...barButtonStyle,
                         width: 32,

@@ -9,11 +9,8 @@ import {
     GetDataTableV2Request,
     GetDataTableV2Response,
     UpdateCellTableV2Request,
-    UpdateCellTableV2Response,
-    UpdateColumnTableV2Request,
-    UpdateColumnTableV2Response
+    UpdateCellTableV2Response
 } from "pages/TablePageV2";
-import {ColumnV2Model} from "entities/ColumnV2Model";
 
 export const tableV2API = createApi({
     reducerPath: 'tableV2API',
@@ -65,6 +62,14 @@ export const tableV2API = createApi({
         updateCell: build.mutation<UpdateCellTableV2Response, UpdateCellTableV2Request>({
             query: (body) => ({
                 url: `update_cell/`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['tableV2']
+        }),
+        updateTableInfo: build.mutation<void, { table_id: string, alternative_name: string }>({
+            query: (body) => ({
+                url: `update_table_info/`,
                 method: 'POST',
                 body
             }),
