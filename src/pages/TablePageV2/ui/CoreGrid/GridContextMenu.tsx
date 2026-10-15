@@ -34,10 +34,28 @@ export const GridContextMenu = ({gridContextMenu, setGridContextMenu}: any) => {
     // Handlers
     const insertEmptyRowBeforeHandler = () => {
         if (id) {
-            insertRow({table_id: id, before_id: gridContextMenu.rowId});
+            insertRow({table_id: id, before_id: gridContextMenu.rowId, copy_values: false});
             setGridContextMenu(null);
         }
-    }
+    };
+    const insertCopyRowBeforeHandler = () => {
+        if (id) {
+            insertRow({table_id: id, before_id: gridContextMenu.rowId, copy_values: true});
+            setGridContextMenu(null);
+        }
+    };
+    const insertEmptyRowAfterHandler = () => {
+        if (id) {
+            insertRow({table_id: id, after_id: gridContextMenu.rowId, copy_values: false});
+            setGridContextMenu(null);
+        }
+    };
+    const insertCopyRowAfterHandler = () => {
+        if (id) {
+            insertRow({table_id: id, after_id: gridContextMenu.rowId, copy_values: true});
+            setGridContextMenu(null);
+        }
+    };
     // -----
 
     const contextMenuItems = [
@@ -51,22 +69,19 @@ export const GridContextMenu = ({gridContextMenu, setGridContextMenu}: any) => {
             key: 'add-before-with-copy',
             label: 'Добавить строку "до" и скопировать данные',
             icon: <CopyOutlined/>,
-            onClick: () => {
-            },
+            onClick: insertCopyRowBeforeHandler,
         },
         {
             key: 'add-after',
             label: 'Добавить строку "после" пустую',
             icon: <PlusOutlined/>,
-            onClick: () => {
-            },
+            onClick: insertEmptyRowAfterHandler,
         },
         {
             key: 'add-after-with-copy',
             label: 'Добавить строку "после" и скопировать данные',
             icon: <CopyOutlined/>,
-            onClick: () => {
-            },
+            onClick: insertCopyRowAfterHandler,
         },
         {
             key: 'add-column-before',

@@ -12,7 +12,7 @@ export const rowV2API = createApi({
             table_id: string,
             before_id?: number,
             after_id?: number,
-            values?: Record<string, string>
+            copy_values?: boolean
         }>({
             query: (body) => ({
                 url: `insert_row/`,
