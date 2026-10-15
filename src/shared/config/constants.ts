@@ -105,3 +105,11 @@ export const COLUMN_TYPES = [
     {value: 'text', label: 'Текст'},
     {value: 'list', label: 'Список'}
 ]
+
+export const excludeColumns = [
+    'allowed_filials',
+    'allowed_users',
+    'position',
+    'position_humanity',
+    'id'
+]

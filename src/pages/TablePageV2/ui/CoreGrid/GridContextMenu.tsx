@@ -4,9 +4,10 @@ import {Dropdown} from "antd";
 import {rowV2API} from "service/RowV2Service";
 import {useParams} from "react-router-dom";
 import {useNotification} from "app/providers/NotificationProvider";
+import {excludeColumns} from "shared/config/constants";
 
-export const GridContextMenu = ({gridContextMenu, setGridContextMenu}: any) => {
-
+export const GridContextMenu = ({apiRef, gridContextMenu, setGridContextMenu}: any) => {
+    console.log()
     // Params
     const {id} = useParams();
     // -----
@@ -32,27 +33,23 @@ export const GridContextMenu = ({gridContextMenu, setGridContextMenu}: any) => {
     // -----
 
     // Handlers
-    const insertEmptyRowBeforeHandler = () => {
+    const insertRowHandler = (position:string|null, withValues:boolean) => {
         if (id) {
-            insertRow({table_id: id, before_id: gridContextMenu.rowId, copy_values: false});
-            setGridContextMenu(null);
-        }
-    };
-    const insertCopyRowBeforeHandler = () => {
-        if (id) {
-            insertRow({table_id: id, before_id: gridContextMenu.rowId, copy_values: true});
-            setGridContextMenu(null);
-        }
-    };
-    const insertEmptyRowAfterHandler = () => {
-        if (id) {
-            insertRow({table_id: id, after_id: gridContextMenu.rowId, copy_values: false});
-            setGridContextMenu(null);
-        }
-    };
-    const insertCopyRowAfterHandler = () => {
-        if (id) {
-            insertRow({table_id: id, after_id: gridContextMenu.rowId, copy_values: true});
+            if (apiRef?.current){
+                const row = apiRef?.current?.getRow(gridContextMenu.rowId);
+                let values:Record<string, string> = {};
+                if (withValues)
+                    Object.keys(row).filter(k=>!excludeColumns.includes(k)).forEach((filtered_key:string)=> {
+                        values[filtered_key] = row[filtered_key];
+                    });
+                let requestParams:Record<string,any> = {
+                    table_id: id,
+                    values
+                }
+                if (position)
+                    requestParams[position] = gridContextMenu.rowId;
+                insertRow(requestParams);
+            }
             setGridContextMenu(null);
         }
     };
@@ -63,25 +60,25 @@ export const GridContextMenu = ({gridContextMenu, setGridContextMenu}: any) => {
             key: 'add-before',
             label: 'Добавить строку "до" пустую',
             icon: <PlusOutlined/>,
-            onClick: insertEmptyRowBeforeHandler,
+            onClick: ()=>insertRowHandler('before_id', false),
         },
         {
             key: 'add-before-with-copy',
             label: 'Добавить строку "до" и скопировать данные',
             icon: <CopyOutlined/>,
-            onClick: insertCopyRowBeforeHandler,
+            onClick: ()=>insertRowHandler('before_id', true),
         },
         {
             key: 'add-after',
             label: 'Добавить строку "после" пустую',
             icon: <PlusOutlined/>,
-            onClick: insertEmptyRowAfterHandler,
+            onClick: ()=>insertRowHandler('after_id', false),
         },
         {
             key: 'add-after-with-copy',
             label: 'Добавить строку "после" и скопировать данные',
             icon: <CopyOutlined/>,
-            onClick: insertCopyRowAfterHandler,
+            onClick: ()=>insertRowHandler('after_id', true),
         },
         {
             key: 'add-column-before',

@@ -8,12 +8,7 @@ export const rowV2API = createApi({
     }),
     tagTypes: ['rowV2'],
     endpoints: (build) => ({
-        insertRow: build.mutation<void, {
-            table_id: string,
-            before_id?: number,
-            after_id?: number,
-            copy_values?: boolean
-        }>({
+        insertRow: build.mutation<void, Record<string, any>>({
             query: (body) => ({
                 url: `insert_row/`,
                 method: 'POST',

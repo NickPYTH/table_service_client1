@@ -1,6 +1,6 @@
 import {useForm} from "antd/es/form/Form";
 import {FieldType} from "widgets/ColumnSettings/store/types";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {setIsVisibleColumnSettingsModal, TableV2ModelStateType} from "store/slice/TableV2Slice";
@@ -24,6 +24,7 @@ export const useColumnSettings = () => {
 
     // State
     const [form] = useForm<FieldType>();
+    const [createMode] = useState<boolean>(!tableV2State.selectedColumnSystemName);
     // -----
 
     // Web requests
@@ -106,6 +107,7 @@ export const useColumnSettings = () => {
     // -----
 
     return {
+        createMode,
         columnServerData,
         tableV2State,
         form,

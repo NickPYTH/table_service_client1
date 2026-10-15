@@ -17,7 +17,7 @@ import {
 } from "@mui/x-data-grid-premium";
 import {Divider, Menu, MenuItem} from "@mui/material";
 import {InsertRowBelowOutlined, InsertRowRightOutlined} from "@ant-design/icons";
-import { TableV2ModelStateType } from "store/slice/TableV2Slice";
+import {setIsVisibleColumnSettingsModal, TableV2ModelStateType} from "store/slice/TableV2Slice";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import {rowV2API} from "service/RowV2Service";
@@ -87,6 +87,9 @@ export const CustomToolbar = ({
             insertRow({table_id: id});
         }
     }
+    const insertColumnHandler = () => {
+        dispatch(setIsVisibleColumnSettingsModal(true));
+    }
     // -----
 
     return (
@@ -106,7 +109,7 @@ export const CustomToolbar = ({
                 </ToolbarButton>
             </Tooltip>
             <Tooltip title="Вставить столбец">
-                <ToolbarButton aria-label="Вставить столбец" onClick={insertRowHandler}>
+                <ToolbarButton aria-label="Вставить столбец" onClick={insertColumnHandler}>
                     <InsertRowRightOutlined style={{fontSize: 18}}/>
                 </ToolbarButton>
             </Tooltip>

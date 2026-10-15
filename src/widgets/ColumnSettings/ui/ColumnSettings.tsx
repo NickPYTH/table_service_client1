@@ -7,6 +7,7 @@ import {SelectTypeGrid} from "widgets/ColumnSettings/ui/SelectTypeGrid";
 const ColumnSettings = () => {
 
     const {
+        createMode,
         columnServerData,
         tableV2State,
         form,
@@ -18,7 +19,7 @@ const ColumnSettings = () => {
 
     return (
         <Modal
-            title="Настройки колонки"
+            title={`${createMode?"Создание":"Настройка"} колонки`}
             open={tableV2State.isVisibleColumnSettingsModal}
             onOk={saveHandler}
             onCancel={closeHandler}

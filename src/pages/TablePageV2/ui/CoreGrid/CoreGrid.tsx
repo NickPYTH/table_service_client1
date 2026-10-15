@@ -96,7 +96,7 @@ export const CoreGrid = () => {
                     cellSelection
                 />
             }
-            <GridContextMenu gridContextMenu={gridContextMenu} setGridContextMenu={setGridContextMenu}/>
+            <GridContextMenu apiRef={apiRef} gridContextMenu={gridContextMenu} setGridContextMenu={setGridContextMenu}/>
         </>
     )
 }
