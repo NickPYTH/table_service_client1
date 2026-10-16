@@ -1,8 +1,6 @@
 import {useParams} from "react-router-dom";
-import {tablePermissionV2API} from "service/TablePermissionServiceV2";
-import {GridCellParams, GridColDef, useGridApiRef} from "@mui/x-data-grid-premium";
+import {GridCellParams, GridColDef, GridRowParams, useGridApiRef} from "@mui/x-data-grid-premium";
 import {useMemo, useState} from "react";
-import {Button, Flex} from "antd";
 
 export const useUserPermissionSettings = () => {
 
@@ -14,22 +12,7 @@ export const useUserPermissionSettings = () => {
 
     // States
     const [visibleUserPermissionModal, setVisibleUserPermissionModal] = useState(false);
-    // -----
-
-    // Web requests
-    const [createRecord, {
-        isSuccess: isCreateRecordSuccess
-    }] = tablePermissionV2API.useGetUserTablePermissionsMutation();
-    const [updateRecord, {
-        isSuccess: isUpdateRecordSuccess
-    }] = tablePermissionV2API.useGetUserTablePermissionsMutation();
-    const [deleteRecord, {
-        isSuccess: isDeleteRecordSuccess
-    }] = tablePermissionV2API.useGetUserTablePermissionsMutation();
-    // -----
-
-    // Effects
-
+    const [selectedUserPermissionId, setSelectedUserPermissionId] = useState<number | null>(null);
     // -----
 
     // Handlers
@@ -49,7 +32,10 @@ export const useUserPermissionSettings = () => {
             }, 100);
         }
     }
-
+    const onRowDoubleClickHandler = (params: GridRowParams) => {
+        setSelectedUserPermissionId(params.id as unknown as number);
+        setVisibleUserPermissionModal(true);
+    };
     // -----
 
     // Useful utils
@@ -71,7 +57,7 @@ export const useUserPermissionSettings = () => {
                 rows: data,
             };
         }
-    }), [id, isCreateRecordSuccess, isUpdateRecordSuccess, isDeleteRecordSuccess]);
+    }), [id]);
 
     const columns: GridColDef[] = useMemo(() => {
         return [
@@ -88,18 +74,6 @@ export const useUserPermissionSettings = () => {
                 field: "role_name",
                 headerName: "Роль",
                 minWidth: 200
-            },
-            {
-                field: "delete",
-                headerName: "",
-                sortable: false,
-                disableColumnMenu: true,
-                renderCell: params => (
-                    <Flex justify={'center'} align={'center'} style={{height: '100%'}}>
-                        <Button size={'small'} danger onClick={() => {
-                        }}>Удалить</Button>
-                    </Flex>
-                )
             }
         ]
     }, []);
@@ -113,5 +87,8 @@ export const useUserPermissionSettings = () => {
         onCellEditStopHandler,
         visibleUserPermissionModal,
         setVisibleUserPermissionModal,
+        selectedUserPermissionId,
+        setSelectedUserPermissionId,
+        onRowDoubleClickHandler
     }
 }

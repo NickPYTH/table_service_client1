@@ -14,11 +14,21 @@ export const UserPermissionSettings = () => {
         onCellEditStopHandler,
         visibleUserPermissionModal,
         setVisibleUserPermissionModal,
+        selectedUserPermissionId,
+        setSelectedUserPermissionId,
+        onRowDoubleClickHandler
     } = useUserPermissionSettings();
 
     return (
         <Flex vertical gap={'small'}>
-            {visibleUserPermissionModal && <UserPermissionModal visible={visibleUserPermissionModal} setVisible={setVisibleUserPermissionModal} />}
+            {visibleUserPermissionModal &&
+                <UserPermissionModal
+                    visible={visibleUserPermissionModal}
+                    setVisible={setVisibleUserPermissionModal}
+                    selectedUserPermissionId={selectedUserPermissionId}
+                    setSelectedUserPermissionId={setSelectedUserPermissionId}
+                    apiRef={apiRef}
+                />}
             <Flex gap={'small'}>
                 <Button size={'small'} onClick={createRecordHandler}>Добавить</Button>
             </Flex>
@@ -35,6 +45,7 @@ export const UserPermissionSettings = () => {
                 showCellVerticalBorder
                 showColumnVerticalBorder
                 onCellEditStop={onCellEditStopHandler}
+                onRowDoubleClick={onRowDoubleClickHandler}
             />
         </Flex>
     )

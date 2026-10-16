@@ -75,5 +75,12 @@ export const tableV2API = createApi({
             }),
             invalidatesTags: ['tableV2']
         }),
+        searchUser: build.mutation<{ value: string }[], string>({
+            query: (search) => ({
+                url: `search_user/?search_query=${search}`,
+                method: 'GET',
+            }),
+            invalidatesTags: ['tableV2']
+        }),
     })
 });

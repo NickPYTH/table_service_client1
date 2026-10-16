@@ -10,4 +10,12 @@ export type FieldType = {
 export type UserPermissionModalType = {
     visible: boolean;
     setVisible: (visible: boolean) => void;
+    selectedUserPermissionId: number| null;
+    setSelectedUserPermissionId: (selectedUserPermission: number | null) => void;
+    apiRef: any
 }
+
+export type UserPermissionModalFieldType = {
+    username: string;
+    role: string;
+};
