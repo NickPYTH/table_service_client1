@@ -35,7 +35,7 @@ export const tablePermissionV2API = createApi({
             table_id: string,
             username: string,
             role: string,
-            is_create: boolean,
+            permission_id: number | null,
         }>({
             query: (body) => ({
                 url: `update_table_permission/`,
@@ -45,8 +45,7 @@ export const tablePermissionV2API = createApi({
             invalidatesTags: ['tablePermissionV2']
         }),
         removeTablePermission: build.mutation<void, {
-            table_id: string,
-            username: string,
+            permission_id: number,
         }>({
             query: (body) => ({
                 url: `remove_table_permission/`,

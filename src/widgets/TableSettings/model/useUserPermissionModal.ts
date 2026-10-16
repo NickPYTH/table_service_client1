@@ -90,14 +90,14 @@ export const useUserPermissionModal = ({
                         table_id: id,
                         username: values.username,
                         role: values.role,
-                        is_create: false
+                        permission_id: selectedUserPermissionId
                     });
                 } else {
                     update({
                         table_id: id,
                         username: values.username,
                         role: values.role,
-                        is_create: true
+                        permission_id: null
                     });
                 }
             } catch (e) {
@@ -110,11 +110,9 @@ export const useUserPermissionModal = ({
             searchUser(value.trim());
     }, 1000);
     const deleteHandler = async () => {
-        if (id) {
-            const values = await form.validateFields();
+        if (selectedUserPermissionId) {
             deletePermission({
-                table_id: id,
-                username: values.username
+                permission_id: selectedUserPermissionId
             })
         }
     };
