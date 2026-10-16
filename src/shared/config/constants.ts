@@ -113,3 +113,12 @@ export const excludeColumns = [
     'position_humanity',
     'id'
 ]
+
+export const FILIALS = [
+    {value: "adm"},
+    {value: "adm1"},
+    {value: "adm2"},
+    {value: "adm3"},
+    {value: "adm4"}
+
+]

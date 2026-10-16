@@ -66,7 +66,8 @@ export const UserPermissionModal = ({
                         options={[
                             {value: "admin"},
                             {value: "owner"},
-                            {value: "user"}
+                            {value: "editor"},
+                            {value: "reader"}
                         ]}
                         placeholder="Выберите роль"
                         allowClear

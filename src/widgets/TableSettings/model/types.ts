@@ -15,7 +15,20 @@ export type UserPermissionModalType = {
     apiRef: any
 }
 
+export type FilialPermissionModalType = {
+    visible: boolean;
+    setVisible: (visible: boolean) => void;
+    selectedFilialPermissionId: number| null;
+    setSelectedFilialPermissionId: (selectedFilialPermission: number | null) => void;
+    apiRef: any
+}
+
 export type UserPermissionModalFieldType = {
     username: string;
+    role: string;
+};
+
+export type FilialPermissionModalFieldType = {
+    filial: string;
     role: string;
 };

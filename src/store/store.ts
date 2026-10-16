@@ -22,6 +22,7 @@ import tableV2Slice from "./slice/TableV2Slice";
 import {columnV2API} from "service/ColumnV2Service";
 import {rowV2API} from "service/RowV2Service";
 import {tablePermissionV2API} from "service/TablePermissionServiceV2";
+import {tableFilialPermissionV2API} from "service/TableFilialPermissionServiceV2";
 
 export type RootStateType = {
     currentUser: CurrentUserModelStateType
@@ -51,6 +52,7 @@ const rootReducer = combineReducers({
     [columnV2API.reducerPath]: columnV2API.reducer,
     [rowV2API.reducerPath]: rowV2API.reducer,
     [tablePermissionV2API.reducerPath]: tablePermissionV2API.reducer,
+    [tableFilialPermissionV2API.reducerPath]: tableFilialPermissionV2API.reducer,
 })
 
 export const setupStore = () => {
@@ -79,6 +81,7 @@ export const setupStore = () => {
                 .concat(columnV2API.middleware)
                 .concat(rowV2API.middleware)
                 .concat(tablePermissionV2API.middleware)
+                .concat(tableFilialPermissionV2API.middleware)
     })
 }
 
