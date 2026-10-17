@@ -1,6 +1,6 @@
 import {useEffect, useMemo} from "react";
 import {useParams} from "react-router-dom";
-import {useGridApiRef} from "@mui/x-data-grid-premium";
+import {DataGridPremiumProps, useGridApiRef} from "@mui/x-data-grid-premium";
 //@ts-ignore
 import {debounce} from "lodash";
 import {useWebSocket} from "app/providers/WebSocketProvider";
@@ -113,14 +113,29 @@ export const useRows = () => {
             return {
                 rows: data.rows,
                 rowCount: data.paginator.total,
+                pivotColumns: data.pivotColumns
             };
         },
         getGroupKey: (row: any) => row.name,
         getChildrenCount: (row: any) => row.childrenCount,
+        getAggregatedValue: (row:any, field:string) => {
+            // сервер уже агрегированные значения в поле `j`
+            // `field` имя агрегированного поля 'j'
+            return row[field];
+        },
     }), [id]);
+    const pivotingColDef: DataGridPremiumProps['pivotingColDef'] = (
+        originalColumnField,
+        columnGroupPath,
+    ) => ({
+        // Если columns пуст, columnGroupPath — пустой массив, результат — просто 'j'
+        // Это совпадает с именем поля, возвращённым сервером
+        field: columnGroupPath.concat(originalColumnField).join('>->'),
+    });
 
     return {
         apiRef,
-        dataSource
+        dataSource,
+        pivotingColDef
     }
 }

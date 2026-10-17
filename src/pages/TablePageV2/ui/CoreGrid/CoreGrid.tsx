@@ -22,6 +22,7 @@ export const CoreGrid = () => {
     const {
         apiRef,
         dataSource,
+        pivotingColDef
     } = useRows();
     const {
         tableV2State,
@@ -96,6 +97,7 @@ export const CoreGrid = () => {
                         aiAssistantPanelNewConversation: 'Новая беседа',
                     }}
                     cellSelection
+                    pivotingColDef={pivotingColDef}
                 />
             }
             <GridContextMenu apiRef={apiRef} gridContextMenu={gridContextMenu} setGridContextMenu={setGridContextMenu}/>
