@@ -9,6 +9,7 @@ import {CustomPaginationWithSelect} from "./Slots/CustomPagination";
 import {CustomToolbar} from "./Slots/CustomToolbar";
 import {RowSettings} from "widgets/RowSettings";
 import {GridContextMenu} from "pages/TablePageV2/ui/CoreGrid/GridContextMenu";
+import {usePersistedGridState} from "./usePersistedGridState";
 
 
 export const CoreGrid = () => {
@@ -30,6 +31,7 @@ export const CoreGrid = () => {
         setGridContextMenu,
         handleCellContextMenu
     } = useCoreGrid(apiRef);
+    const initialState = usePersistedGridState(apiRef, hiddenColumns);
 
     return (
         <>
@@ -53,7 +55,7 @@ export const CoreGrid = () => {
                     throttleRowsMs={100}
                     onCellEditStop={onCellEditStopHandler}
                     isCellEditable={isCellEditableHandler}
-                    initialState={{
+                    initialState={initialState ?? {
                         pinnedColumns: {right: ['action'], left: ['order_f']},
                         columns: {
                             columnVisibilityModel: {...hiddenColumns}
