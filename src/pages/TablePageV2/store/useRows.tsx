@@ -1,6 +1,6 @@
 import {useEffect, useMemo} from "react";
 import {useParams} from "react-router-dom";
-import {DataGridPremiumProps, useGridApiRef} from "@mui/x-data-grid-premium";
+import {DataGridPremiumProps, GridColType, useGridApiRef} from "@mui/x-data-grid-premium";
 //@ts-ignore
 import {debounce} from "lodash";
 import {useWebSocket} from "app/providers/WebSocketProvider";
@@ -110,17 +110,18 @@ export const useRows = () => {
 
             const data = await response.json();
 
+            // если без свода то paginator.total иначе rowCount (у свода нету пагинации все данные что нашел отдаю)
+            const rowCount = data.paginator?.total ?? data.rowCount ?? 0;
+
             return {
-                rows: data.rows,
-                rowCount: data.paginator.total,
+                rows: data.rows ?? [],
+                rowCount,
                 pivotColumns: data.pivotColumns
             };
         },
-        getGroupKey: (row: any) => row.name,
-        getChildrenCount: (row: any) => row.childrenCount,
+        getGroupKey: (row: any) => row.name ?? row.id,
+        getChildrenCount: (row: any) => row.childrenCount ?? -1,
         getAggregatedValue: (row:any, field:string) => {
-            // сервер уже агрегированные значения в поле `j`
-            // `field` имя агрегированного поля 'j'
             return row[field];
         },
     }), [id]);
@@ -128,14 +129,25 @@ export const useRows = () => {
         originalColumnField,
         columnGroupPath,
     ) => ({
-        // Если columns пуст, columnGroupPath — пустой массив, результат — просто 'j'
-        // Это совпадает с именем поля, возвращённым сервером
+        // Если columns пуст, columnGroupPath это пустой [] а результат имя поля  'j', которое совпадет с полем с сервера
         field: columnGroupPath.concat(originalColumnField).join('>->'),
+        type: 'number',
     });
 
     return {
         apiRef,
         dataSource,
-        pivotingColDef
+        pivotingColDef,
+        aggregationFunctions: serverAggregationFunctions,
     }
 }
+
+const numericColumnTypes = ['number', 'string', 'text'] as GridColType[];
+const comparableColumnTypes = ['number', 'string', 'text', 'date', 'dateTime'] as GridColType[];
+const serverAggregationFunctions: DataGridPremiumProps['aggregationFunctions'] = {
+    sum: {columnTypes: numericColumnTypes},
+    avg: {columnTypes: numericColumnTypes},
+    min: {columnTypes: comparableColumnTypes},
+    max: {columnTypes: comparableColumnTypes},
+    size: {},
+};

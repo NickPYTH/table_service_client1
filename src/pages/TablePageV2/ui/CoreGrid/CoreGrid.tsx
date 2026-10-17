@@ -22,7 +22,8 @@ export const CoreGrid = () => {
     const {
         apiRef,
         dataSource,
-        pivotingColDef
+        pivotingColDef,
+        aggregationFunctions,
     } = useRows();
     const {
         tableV2State,
@@ -97,6 +98,7 @@ export const CoreGrid = () => {
                         aiAssistantPanelNewConversation: 'Новая беседа',
                     }}
                     cellSelection
+                    aggregationFunctions={aggregationFunctions}
                     pivotingColDef={pivotingColDef}
                 />
             }
