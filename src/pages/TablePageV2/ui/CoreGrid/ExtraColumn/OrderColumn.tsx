@@ -12,7 +12,7 @@ let OrderColumn: GridColDef = {
     width: 50,
     aggregable: false,
     renderCell: (data) => (<Flex style={{height: '100%'}} gap={'small'} align={'center'} justify={'center'}>
-        <Tag>{data.row['position_humanity']+1}</Tag>
+        {!isNaN(data.row['position_humanity']) && <Tag>{data.row['position_humanity'] + 1}</Tag>}
     </Flex>)
 };
 

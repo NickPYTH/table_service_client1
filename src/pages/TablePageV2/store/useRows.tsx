@@ -92,7 +92,8 @@ export const useRows = () => {
                 "sort": params.sortModel,
                 "filter": params.filterModel,
                 "group_keys": params.groupKeys,
-                "group_fields": params.groupFields
+                "group_fields": params.groupFields,
+                "pivot": params.pivotModel,
             });
 
             const requestOptions = {
